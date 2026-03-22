@@ -1,0 +1,494 @@
+﻿<Window x:Class="StaffBY.App.Views.EmployeeEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Личная карточка сотрудника (форма Т-2)"
+        Height="750" Width="950"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        WindowState="Maximized">
+
+    <Window.Resources>
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+        </Style>
+
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+        <Style x:Key="DatePickerStyle" TargetType="DatePicker">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <Border Grid.Row="0" Background="#34495E" Padding="10" Margin="-10,0,-10,10">
+            <TextBlock Text="ЛИЧНАЯ КАРТОЧКА РАБОТНИКА (форма Т-2)" 
+                       FontSize="18" 
+                       FontWeight="Bold" 
+                       Foreground="White"
+                       HorizontalAlignment="Center"/>
+        </Border>
+
+        <!-- Вкладки -->
+        <TabControl Grid.Row="1" x:Name="MainTabControl" Margin="0,0,0,10">
+
+            <!-- ========== Вкладка 1: Общие сведения ========== -->
+            <!-- ========== Вкладка 1: Общие сведения ========== -->
+            <TabItem Header="📋 Общие сведения">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- ========== ЛЕВАЯ КОЛОНКА ========== -->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
+
+                        <!-- Табельный номер и пол в одной строке -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Табельный номер:" VerticalAlignment="Center" Width="100"/>
+                            <TextBox Grid.Column="1" x:Name="txtPersonalNumber" Height="28" Margin="5,0,10,0" VerticalContentAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="Пол:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                            <ComboBox Grid.Column="3" x:Name="cmbGender" Width="60" Height="28">
+                                <ComboBoxItem Content="М"/>
+                                <ComboBoxItem Content="Ж"/>
+                            </ComboBox>
+                        </Grid>
+
+                        <!-- Фамилия -->
+                        <TextBlock Text="Фамилия:" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtLastName" Height="28" Margin="0,0,0,8"/>
+
+                        <!-- Имя -->
+                        <TextBlock Text="Имя:" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtFirstName" Height="28" Margin="0,0,0,8"/>
+
+                        <!-- Отчество -->
+                        <TextBlock Text="Отчество:" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtPatronymic" Height="28" Margin="0,0,0,8"/>
+
+                        <!-- Дата рождения и место рождения в одной строке -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Дата рождения:" VerticalAlignment="Center" Width="90"/>
+                            <DatePicker Grid.Column="1" x:Name="dpBirthDate" Height="28" Margin="5,0,10,0"/>
+                            <TextBlock Grid.Column="2" Text="Место рождения:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                            <TextBox Grid.Column="3" x:Name="txtBirthPlace" Height="28" Margin="5,0,0,0"/>
+                        </Grid>
+
+                        <!-- Гражданство -->
+                        <TextBlock Text="Гражданство:" Margin="0,5,0,2"/>
+                        <ComboBox x:Name="cmbCitizenship" Height="28" Margin="0,0,0,8">
+                            <ComboBoxItem Content="Республика Беларусь"/>
+                            <ComboBoxItem Content="Российская Федерация"/>
+                            <ComboBoxItem Content="Другое"/>
+                        </ComboBox>
+
+                        <!-- Образование -->
+                        <TextBlock Text="Образование:" Margin="0,5,0,2"/>
+                        <ComboBox x:Name="cmbEducation" Height="28" Margin="0,0,0,8">
+                            <ComboBoxItem Content="Высшее"/>
+                            <ComboBoxItem Content="Среднее специальное"/>
+                            <ComboBoxItem Content="Профессионально-техническое"/>
+                            <ComboBoxItem Content="Среднее"/>
+                            <ComboBoxItem Content="Среднее общее"/>
+                        </ComboBox>
+
+                        <!-- Учебное заведение -->
+                        <TextBlock Text="Учебное заведение:" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtEducationInstitution" Height="28" Margin="0,0,0,8"/>
+
+                        <!-- Дата окончания и квалификация в одной строке -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Дата окончания:" VerticalAlignment="Center" Width="90"/>
+                            <DatePicker Grid.Column="1" x:Name="dpEducationEndDate" Height="28" Margin="5,0,10,0"/>
+                            <TextBlock Grid.Column="2" Text="Квалификация:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                            <TextBox Grid.Column="3" x:Name="txtQualification" Height="28" Margin="5,0,0,0"/>
+                        </Grid>
+
+                    </StackPanel>
+
+                    <!-- Разделитель -->
+                    <Border Grid.Row="0" Grid.Column="1" Background="LightGray" Width="1"/>
+
+                    <!-- ========== ПРАВАЯ КОЛОНКА ========== -->
+                    <StackPanel Grid.Row="0" Grid.Column="2" Margin="10,0,0,0">
+
+                        <!-- Паспорт: серия, номер, дата выдачи -->
+                        <TextBlock Text="Паспорт:" Margin="0,5,0,2"/>
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Серия:" VerticalAlignment="Center" Width="40"/>
+                            <TextBox Grid.Column="1" x:Name="txtPassportSeries" Height="28" Margin="5,0,5,0"/>
+                            <TextBlock Grid.Column="2" Text="Номер:" VerticalAlignment="Center" Margin="5,0,5,0"/>
+                            <TextBox Grid.Column="3" x:Name="txtPassportNumber" Height="28" Margin="5,0,5,0"/>
+                            <TextBlock Grid.Column="4" Text="Дата выдачи:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                            <DatePicker Grid.Column="5" x:Name="dpPassportIssueDate" Height="28" Margin="5,0,0,0"/>
+                        </Grid>
+
+                        <!-- Кем выдан -->
+                        <TextBlock Text="Кем выдан:" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtPassportIssuedBy" Height="40" Margin="0,0,0,8" TextWrapping="Wrap"/>
+
+                        <!-- Срок действия (под датой выдачи) -->
+                        <TextBlock Text="Срок действия:" Margin="0,5,0,2"/>
+                        <DatePicker x:Name="dpPassportExpiryDate" Height="28" Margin="0,0,0,8"/>
+
+                        <!-- Личный номер (идентификационный) -->
+                        <TextBlock Text="Личный номер (идентификационный):" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtIdentificationNumber" Height="28" Margin="0,0,0,8"/>
+
+                        <!-- Страховой номер -->
+                        <TextBlock Text="Страховой номер (ФСЗН):" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtInsuranceNumber" Height="28" Margin="0,0,0,8"/>
+
+                        <!-- Семейное положение -->
+                        <TextBlock Text="Семейное положение:" Margin="0,5,0,2"/>
+                        <ComboBox x:Name="cmbMaritalStatus" Height="28" Margin="0,0,0,8">
+                            <ComboBoxItem Content="Холост/Не замужем"/>
+                            <ComboBoxItem Content="Женат/Замужем"/>
+                            <ComboBoxItem Content="Разведен/Разведена"/>
+                            <ComboBoxItem Content="Вдовец/Вдова"/>
+                        </ComboBox>
+
+                        <!-- Адрес проживания -->
+                        <TextBlock Text="Адрес проживания:" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtHomeAddress" Height="50" Margin="0,0,0,8" TextWrapping="Wrap"/>
+
+                        <!-- Телефон -->
+                        <TextBlock Text="Телефон:" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtPhone" Height="28" Margin="0,0,0,8"/>
+
+                        <!-- Email -->
+                        <TextBlock Text="Email:" Margin="0,5,0,2"/>
+                        <TextBox x:Name="txtEmail" Height="28" Margin="0,0,0,8"/>
+
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- ========== Вкладка 2: Трудоустройство и должность ========== -->
+            <TabItem Header="💼 Трудоустройство">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Должность -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Должность:" Style="{StaticResource LabelStyle}"/>
+                    <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cmbPosition" Style="{StaticResource ComboBoxStyle}"
+                              DisplayMemberPath="Name" SelectedValuePath="Id"/>
+
+                    <!-- Отдел -->
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Отдел:" Style="{StaticResource LabelStyle}"/>
+                    <ComboBox Grid.Row="0" Grid.Column="3" x:Name="cmbDepartment" Style="{StaticResource ComboBoxStyle}"
+                              DisplayMemberPath="Name" SelectedValuePath="Id"/>
+
+                    <!-- Дата приема -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Дата приема:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                    <DatePicker Grid.Row="1" Grid.Column="1" x:Name="dpHireDate" Style="{StaticResource DatePickerStyle}"/>
+
+                    <!-- Оклад -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Оклад:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtSalary" Style="{StaticResource TextBoxStyle}"/>
+
+                    <!-- Форма занятости -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Форма занятости:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                    <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cmbEmploymentType" Style="{StaticResource ComboBoxStyle}">
+                        <ComboBoxItem Content="Основная"/>
+                        <ComboBoxItem Content="Совместительство"/>
+                    </ComboBox>
+
+                    <!-- Тип договора -->
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Тип договора:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                    <ComboBox Grid.Row="4" Grid.Column="1" x:Name="cmbContractType" Style="{StaticResource ComboBoxStyle}">
+                        <ComboBoxItem Content="Трудовой договор"/>
+                        <ComboBoxItem Content="Контракт"/>
+                    </ComboBox>
+
+                    <!-- Срок действия контракта -->
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Срок действия:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                    <DatePicker Grid.Row="5" Grid.Column="1" x:Name="dpContractEndDate" Style="{StaticResource DatePickerStyle}"/>
+
+                    <!-- Стаж работы -->
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Стаж работы:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                    <TextBox Grid.Row="6" Grid.Column="1" x:Name="txtWorkExperience" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"/>
+
+                    <TextBlock Grid.Row="6" Grid.Column="2" Text="На данном предприятии:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                    <TextBox Grid.Row="6" Grid.Column="3" x:Name="txtExperienceHere" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"/>
+
+                </Grid>
+            </TabItem>
+
+            <!-- ========== Вкладка 3: Воинский учет (форма Т-2 раздел 2) ========== -->
+            <TabItem Header="🎖️ Воинский учет">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Категория учета -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Категория учета:" Style="{StaticResource LabelStyle}"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cmbMilitaryCategory" Style="{StaticResource ComboBoxStyle}">
+                            <ComboBoxItem Content="I категория"/>
+                            <ComboBoxItem Content="II категория"/>
+                            <ComboBoxItem Content="Не подлежит"/>
+                        </ComboBox>
+
+                        <!-- Состав -->
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Состав:" Style="{StaticResource LabelStyle}"/>
+                        <ComboBox Grid.Row="0" Grid.Column="3" x:Name="cmbMilitaryComposition" Style="{StaticResource ComboBoxStyle}">
+                            <ComboBoxItem Content="Солдаты"/>
+                            <ComboBoxItem Content="Сержанты"/>
+                            <ComboBoxItem Content="Прапорщики"/>
+                            <ComboBoxItem Content="Офицеры"/>
+                        </ComboBox>
+
+                        <!-- Воинское звание -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Воинское звание:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtMilitaryRank" Style="{StaticResource TextBoxStyle}"/>
+
+                        <!-- Военно-учетная специальность -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="ВУС №:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" x:Name="txtMilitaryVUS" Style="{StaticResource TextBoxStyle}"/>
+
+                        <!-- Годность к военной службе -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Годность к ВС:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <ComboBox Grid.Row="3" Grid.Column="1" x:Name="cmbFitness" Style="{StaticResource ComboBoxStyle}">
+                            <ComboBoxItem Content="А - годен"/>
+                            <ComboBoxItem Content="Б - годен с ограничениями"/>
+                            <ComboBoxItem Content="В - ограниченно годен"/>
+                            <ComboBoxItem Content="Г - временно не годен"/>
+                            <ComboBoxItem Content="Д - не годен"/>
+                        </ComboBox>
+
+                        <!-- Наименование военкомата -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Военкомат:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" x:Name="txtMilitaryCommissariat" Style="{StaticResource TextBoxStyle}"/>
+
+                        <!-- Состоит на специальном учете -->
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Спец. учет:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <CheckBox Grid.Row="5" Grid.Column="1" x:Name="chkSpecialRegistration" VerticalAlignment="Center" Margin="5"/>
+
+                        <!-- Номер моб. предписания -->
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Моб. предписание №:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" x:Name="txtMobilizationNumber" Style="{StaticResource TextBoxStyle}"/>
+
+                        <!-- Дата постановки на учет -->
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Дата постановки:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <DatePicker Grid.Row="7" Grid.Column="1" x:Name="dpRegistrationDate" Style="{StaticResource DatePickerStyle}"/>
+
+                        <!-- Снят с учета -->
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Снят с учета:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <CheckBox Grid.Row="8" Grid.Column="1" x:Name="chkRemovedFromRegistry" VerticalAlignment="Center" Margin="5"/>
+
+                        <TextBlock Grid.Row="8" Grid.Column="2" Text="Дата снятия:" Style="{StaticResource LabelStyle}" Margin="5,10,5,5"/>
+                        <DatePicker Grid.Row="8" Grid.Column="3" x:Name="dpRemovalDate" Style="{StaticResource DatePickerStyle}"/>
+
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ========== Вкладка 4: Отпуска (форма Т-2 раздел 6) ========== -->
+            <TabItem Header="🏖️ Отпуска">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Панель инструментов -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button Content="➕ Добавить отпуск" 
+                                Padding="10,5" 
+                                Click="AddVacation_Click"
+                                Background="#3498DB"
+                                Foreground="White"/>
+                        <Button Content="✏️ Редактировать" 
+                                Padding="10,5" 
+                                Margin="5,0,0,0"
+                                Click="EditVacation_Click"
+                                Background="#F39C12"
+                                Foreground="White"/>
+                        <Button Content="🗑️ Удалить" 
+                                Padding="10,5" 
+                                Margin="5,0,0,0"
+                                Click="DeleteVacation_Click"
+                                Background="#E74C3C"
+                                Foreground="White"/>
+                        <TextBlock Text="Остаток дней отпуска:" 
+                                   VerticalAlignment="Center" 
+                                   Margin="20,0,0,0"
+                                   FontWeight="Bold"/>
+                        <TextBlock x:Name="txtVacationBalance" 
+                                   Text="0" 
+                                   VerticalAlignment="Center" 
+                                   Margin="5,0,0,0"
+                                   Foreground="Blue"
+                                   FontWeight="Bold"/>
+                    </StackPanel>
+
+                    <!-- Таблица отпусков -->
+                    <DataGrid x:Name="dgVacations" 
+                              Grid.Row="1"
+                              AutoGenerateColumns="False"
+                              SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Вид отпуска" Binding="{Binding VacationType}" Width="120"/>
+                            <DataGridTextColumn Header="За период" Binding="{Binding Period}" Width="100"/>
+                            <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                            <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                            <DataGridTextColumn Header="Кол-во дней" Binding="{Binding DaysCount}" Width="80"/>
+                            <DataGridTextColumn Header="Основание" Binding="{Binding Basis}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- ========== Вкладка 5: Состав семьи ========== -->
+            <TabItem Header="👨‍👩‍👧 Состав семьи">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button Content="➕ Добавить члена семьи" 
+                                Padding="10,5" 
+                                Click="AddFamilyMember_Click"
+                                Background="#3498DB"
+                                Foreground="White"/>
+                        <Button Content="🗑️ Удалить" 
+                                Padding="10,5" 
+                                Margin="5,0,0,0"
+                                Click="RemoveFamilyMember_Click"
+                                Background="#E74C3C"
+                                Foreground="White"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="dgFamilyMembers" 
+                              Grid.Row="1"
+                              AutoGenerateColumns="False"
+                              SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="200"/>
+                            <DataGridTextColumn Header="Степень родства" Binding="{Binding Relationship}" Width="120"/>
+                            <DataGridTextColumn Header="Год рождения" Binding="{Binding BirthYear}" Width="80"/>
+                            <DataGridTextColumn Header="Место работы" Binding="{Binding WorkPlace}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- Кнопки действий -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,10,0,0">
+            <Button x:Name="btnSave" 
+                    Content="💾 Сохранить" 
+                    Width="120" 
+                    Height="35" 
+                    Margin="5"
+                    Background="#27AE60"
+                    Foreground="White"
+                    Click="SaveButton_Click"/>
+            <Button x:Name="btnCancel" 
+                    Content="❌ Отмена" 
+                    Width="100" 
+                    Height="35" 
+                    Margin="5"
+                    Click="CancelButton_Click"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

@@ -183,24 +183,41 @@ namespace StaffBY.App.Views
             SearchTextBox_TextChanged(sender, null);
         }
 
+        
         private void AddEmployeeButton_Click(object sender, RoutedEventArgs e)
         {
-            StatusText.Text = "Открытие формы добавления сотрудника...";
-            MessageBox.Show("Форма добавления сотрудника будет открыта здесь",
-                "Информация",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            var editWindow = new EmployeeEditWindow();
+            editWindow.EmployeeSaved += (s, employee) =>
+            {
+                // Добавляем нового сотрудника
+                employee.Id = _employees.Any() ? _employees.Max(x => x.Id) + 1 : 1;
+                _employees.Add(employee);
+                RefreshEmployeesGrid();
+                StatusText.Text = $"Сотрудник {employee.LastName} {employee.FirstName} добавлен";
+            };
+            editWindow.Owner = this;
+            editWindow.ShowDialog();
         }
 
+        
         private void EmployeesDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (EmployeesDataGrid.SelectedItem is EmployeeViewModel selectedEmployee)
             {
-                StatusText.Text = $"Редактирование сотрудника: {selectedEmployee.LastName} {selectedEmployee.FirstName}";
-                MessageBox.Show($"Редактирование сотрудника: {selectedEmployee.LastName} {selectedEmployee.FirstName}",
-                    "Информация",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                var editWindow = new EmployeeEditWindow(selectedEmployee);
+                editWindow.EmployeeSaved += (s, employee) =>
+                {
+                    // Обновляем данные сотрудника
+                    var index = _employees.FindIndex(x => x.Id == employee.Id);
+                    if (index >= 0)
+                    {
+                        _employees[index] = employee;
+                        RefreshEmployeesGrid();
+                        StatusText.Text = $"Сотрудник {employee.LastName} {employee.FirstName} обновлен";
+                    }
+                };
+                editWindow.Owner = this;
+                editWindow.ShowDialog();
             }
         }
 
