@@ -1,11 +1,11 @@
-﻿<Application x:Class="StaffBY.App.App"
+﻿
+<Application x:Class="StaffBY.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:converters="clr-namespace:StaffBY.App.Converters">
+             xmlns:converters="clr-namespace:StaffBY.App.Converters"
+             StartupUri="Views/AuthWindow.xaml">
     <Application.Resources>
-        <converters:BoolToOppositeConverter x:Key="BoolToOppositeConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToOppositeConverter x:Key="BoolToOppositeConverter"/>
     </Application.Resources>
 </Application>
-
-

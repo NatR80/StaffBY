@@ -21,21 +21,20 @@ namespace StaffBY.App
             _serviceProvider = services.BuildServiceProvider();
         }
 
+        // ДОБАВЬТЕ ЭТО СВОЙСТВО
+        public IServiceProvider Services => _serviceProvider;
+
         private void ConfigureServices(IServiceCollection services)
         {
-            // Регистрируем контекст базы данных
             var connectionString = DatabaseConfig.GetConnectionString();
             services.AddDbContext<StaffBYDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            // Регистрируем сервисы
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
 
-            // Регистрируем ViewModels (используем Scoped, чтобы они жили в рамках запроса)
             services.AddScoped<AuthViewModel>();
-            //services.AddScoped<MainWindowViewModel>(); // если у вас есть такая ViewModel
 
-            // Регистрируем окна (Transient - каждый раз новое окно)
             services.AddTransient<AuthWindow>();
             services.AddTransient<MainWindow>();
         }
@@ -46,7 +45,6 @@ namespace StaffBY.App
 
             try
             {
-                // Убираем лишние MessageBox, так как они могут мешать
                 var authWindow = _serviceProvider.GetRequiredService<AuthWindow>();
                 var authViewModel = _serviceProvider.GetRequiredService<AuthViewModel>();
                 authWindow.DataContext = authViewModel;
@@ -64,7 +62,6 @@ namespace StaffBY.App
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // Освобождаем ресурсы при выходе
             _serviceProvider?.Dispose();
             base.OnExit(e);
         }
