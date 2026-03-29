@@ -26,7 +26,10 @@ namespace StaffBY.DAL.Configuration
             // LocalDB - легковесная база, которая устанавливается вместе с Visual Studio
             string dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "StaffBYDB.mdf");
             return $@"Server=(localdb)\MSSQLLocalDB;Database=StaffBYDB;Integrated Security=true;MultipleActiveResultSets=true;TrustServerCertificate=True;";
-                        
+            //public static string GetConnectionString()
+            //{
+            //    return "Server=DESKTOP-6OFJ3QT\\SQLEXPRESS;Database=StaffBYDB;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;";
+            //}
 
             // Примечание: если у вас нет LocalDB, используйте вариант 1 или 2
         }

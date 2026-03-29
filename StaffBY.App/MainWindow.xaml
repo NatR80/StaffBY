@@ -36,11 +36,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Верхняя панель -->
             <RowDefinition Height="*"/>
-            <!-- Основной контент -->
             <RowDefinition Height="Auto"/>
-            <!-- Строка статуса -->
         </Grid.RowDefinitions>
 
         <!-- ========== Верхняя панель ========== -->
@@ -52,7 +49,6 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Логотип и название -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                     <TextBlock Text="StaffBY" 
                                FontSize="20" 
@@ -66,7 +62,6 @@
                                Margin="5,0,0,0"/>
                 </StackPanel>
 
-                <!-- Информация о пользователе -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <TextBlock x:Name="UserInfoText" 
                                Text="Пользователь: " 
@@ -87,7 +82,83 @@
         <!-- ========== Основной контент с вкладками ========== -->
         <TabControl Grid.Row="1" x:Name="MainTabControl" Margin="10">
 
-            <!-- Вкладка 1: Сотрудники -->
+            <!-- Вкладка 1: Организация -->
+            <TabItem Header="🏢 Организация">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Реквизиты организации" 
+                               FontSize="16" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                    <Grid Grid.Row="1" Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Полное наименование:" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" x:Name="txtFullName" Margin="5,0"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Сокращенное наименование:" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" x:Name="txtShortName" Margin="5,0"/>
+                    </Grid>
+
+                    <Grid Grid.Row="3" Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="УНП:" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" x:Name="txtUNP" Margin="5,0"/>
+                    </Grid>
+
+                    <Grid Grid.Row="4" Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Юридический адрес:" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" x:Name="txtAddress" Margin="5,0"/>
+                    </Grid>
+
+                    <Grid Grid.Row="5" Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Директор (ФИО):" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Column="1" x:Name="cmbDirector" 
+                                  DisplayMemberPath="FullName"
+                                  SelectedValuePath="Id"
+                                  Margin="5,0"/>
+                    </Grid>
+
+                    <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20">
+                        <Button Content="💾 Сохранить" Width="100" Height="30" Margin="5"
+                                Background="#27AE60" Foreground="White"
+                                Click="SaveOrganizationButton_Click"/>
+                        <Button Content="🔄 Обновить" Width="100" Height="30" Margin="5"
+                                Background="#3498DB" Foreground="White"
+                                Click="RefreshOrganizationButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка 2: Сотрудники -->
             <TabItem Header="📋 Сотрудники">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -96,11 +167,9 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Заголовок -->
                     <TextBlock Grid.Row="0" Text="Управление сотрудниками" 
                                Style="{StaticResource SectionHeaderStyle}"/>
 
-                    <!-- Панель инструментов -->
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
                         <TextBox x:Name="SearchTextBox" 
                                  Width="250" 
@@ -118,7 +187,6 @@
                                 Click="ExportToExcelButton_Click"/>
                     </StackPanel>
 
-                    <!-- Таблица сотрудников -->
                     <DataGrid x:Name="EmployeesDataGrid" 
                               Grid.Row="2"
                               AutoGenerateColumns="False"
@@ -157,7 +225,7 @@
                 </Grid>
             </TabItem>
 
-            <!-- Вкладка 2: Штатное расписание -->
+            <!-- Вкладка 3: Штатное расписание -->
             <TabItem Header="🏢 Штатное расписание">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -207,7 +275,7 @@
                 </Grid>
             </TabItem>
 
-            <!-- Вкладка 3: Отпуска -->
+            <!-- Вкладка 4: Отпуска -->
             <TabItem Header="🏖️ Отпуска">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -260,7 +328,153 @@
                 </Grid>
             </TabItem>
 
-            <!-- Вкладка 4: Документы -->
+            <!-- Вкладка 5: Табель -->
+            <TabItem Header="📅 Табель">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Табель учета рабочего времени" 
+                               Style="{StaticResource SectionHeaderStyle}"/>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="Период:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <DatePicker x:Name="dpTimesheetStart" Width="120" Margin="0,0,10,0"/>
+                        <TextBlock Text="-" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <DatePicker x:Name="dpTimesheetEnd" Width="120" Margin="0,0,10,0"/>
+                        <Button Content="📊 Сформировать табель" 
+                                Style="{StaticResource ActionButtonStyle}"
+                                Click="GenerateTimesheetButton_Click"/>
+                        <Button Content="📎 Импорт из Excel" 
+                                Style="{StaticResource ActionButtonStyle}"
+                                Click="ImportTimesheetButton_Click"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2" Text="Учет рабочего времени" 
+                               FontWeight="Bold" Margin="0,10,0,5"/>
+
+                    <DataGrid x:Name="TimesheetDataGrid" 
+                              Grid.Row="3"
+                              AutoGenerateColumns="False"
+                              AlternatingRowBackground="#F9F9F9">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Табельный номер" Binding="{Binding PersonalNumber}" Width="100"/>
+                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding FullName}" Width="150"/>
+                            <DataGridTextColumn Header="Отработано дней" Binding="{Binding WorkedDays}" Width="120"/>
+                            <DataGridTextColumn Header="Больничные" Binding="{Binding SickDays}" Width="100"/>
+                            <DataGridTextColumn Header="Отпуск" Binding="{Binding VacationDays}" Width="100"/>
+                            <DataGridTextColumn Header="Прогулы" Binding="{Binding AbsentDays}" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка 6: Начисление ЗП (для экономиста) -->
+            <TabItem Header="💰 Начисление ЗП">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Расчет начислений заработной платы" 
+                               FontSize="16" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="Период:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <DatePicker x:Name="dpPayrollStart" Width="120" Margin="0,0,10,0"/>
+                        <TextBlock Text="-" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <DatePicker x:Name="dpPayrollEnd" Width="120" Margin="0,0,10,0"/>
+                        <Button Content="🧮 Рассчитать начисления" 
+                                Background="#3498DB" Foreground="White"
+                                Padding="10,5" Click="CalculateAccrualsButton_Click"/>
+                        <Button Content="📤 Экспорт в Excel" 
+                                Background="#27AE60" Foreground="White"
+                                Padding="10,5" Margin="10,0,0,0"
+                                Click="ExportAccrualsButton_Click"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2" Text="Сводка по начислениям" 
+                               FontWeight="Bold" Margin="0,5,0,5"/>
+
+                    <DataGrid x:Name="AccrualsDataGrid" Grid.Row="3"
+                              AutoGenerateColumns="False"
+                              AlternatingRowBackground="#F9F9F9">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Табельный номер" Binding="{Binding PersonalNumber}" Width="100"/>
+                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding FullName}" Width="150"/>
+                            <DataGridTextColumn Header="Должность" Binding="{Binding PositionName}" Width="150"/>
+                            <DataGridTextColumn Header="Оклад" Binding="{Binding Salary, StringFormat=N2}" Width="100"/>
+                            <DataGridTextColumn Header="Отработано дней" Binding="{Binding WorkedDays}" Width="120"/>
+                            <DataGridTextColumn Header="Начислено (руб.)" Binding="{Binding AccruedAmount, StringFormat=N2}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка 7: Выплата ЗП (для бухгалтера) -->
+            <TabItem Header="💸 Выплата ЗП">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Расчет заработной платы к выплате" 
+                               FontSize="16" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="Период:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <DatePicker x:Name="dpPaymentStart" Width="120" Margin="0,0,10,0"/>
+                        <TextBlock Text="-" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <DatePicker x:Name="dpPaymentEnd" Width="120" Margin="0,0,10,0"/>
+                        <Button Content="🧮 Рассчитать к выплате" 
+                                Background="#3498DB" Foreground="White"
+                                Padding="10,5" Click="CalculatePaymentButton_Click"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2" Text="Расчетный листок" 
+                               FontWeight="Bold" Margin="0,5,0,5"/>
+
+                    <DataGrid x:Name="PaymentDataGrid" Grid.Row="3"
+                              AutoGenerateColumns="False"
+                              AlternatingRowBackground="#F9F9F9"
+                              SelectionChanged="PaymentDataGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Табельный номер" Binding="{Binding PersonalNumber}" Width="100"/>
+                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding FullName}" Width="150"/>
+                            <DataGridTextColumn Header="Начислено" Binding="{Binding AccruedAmount, StringFormat=N2}" Width="100"/>
+                            <DataGridTextColumn Header="Подоходный налог (13%)" Binding="{Binding IncomeTax, StringFormat=N2}" Width="120"/>
+                            <DataGridTextColumn Header="Взносы (1%)" Binding="{Binding Contributions, StringFormat=N2}" Width="100"/>
+                            <DataGridTextColumn Header="К выплате" Binding="{Binding NetAmount, StringFormat=N2}" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Border Grid.Row="4" BorderBrush="#BDC3C7" BorderThickness="1" Margin="0,10,0,0" Padding="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="txtPaymentDetails" Text="Выберите сотрудника для просмотра деталей"/>
+                            <Button Grid.Column="1" Content="🖨️ Печать расчетного листка" 
+                                    Background="#3498DB" Foreground="White"
+                                    Padding="10,5" Click="PrintPayslipButton_Click"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка 8: Документы -->
             <TabItem Header="📄 Документы">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -292,7 +506,6 @@
                                 Click="GenerateDocumentButton_Click"/>
                     </StackPanel>
 
-                    <!-- Предпросмотр документа -->
                     <Border Grid.Row="2" 
                             BorderBrush="#BDC3C7" 
                             BorderThickness="1" 
@@ -306,7 +519,7 @@
                 </Grid>
             </TabItem>
 
-            <!-- Вкладка 5: Отчеты -->
+            <!-- Вкладка 9: Отчеты -->
             <TabItem Header="📊 Отчеты">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -336,7 +549,6 @@
                                 Click="MilitaryReportButton_Click"/>
                     </StackPanel>
 
-                    <!-- Область для отображения отчета -->
                     <ScrollViewer Grid.Row="2">
                         <TextBlock x:Name="ReportTextBlock" 
                                    FontFamily="Consolas"
@@ -345,7 +557,7 @@
                 </Grid>
             </TabItem>
 
-            <!-- Вкладка 6: Архив -->
+            <!-- Вкладка 10: Архив -->
             <TabItem Header="📦 Архив">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -399,4 +611,3 @@
 
     </Grid>
 </Window>
-
