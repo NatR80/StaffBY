@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="StaffBY.App.Views.UserControls.PaymentControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Расчет заработной платы к выплате" 
+                   FontSize="16" FontWeight="Bold" Margin="0,0,0,15"
+                   Foreground="#2C3E50"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Период:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <DatePicker x:Name="dpStart" Width="120" Margin="0,0,10,0"/>
+            <TextBlock Text="-" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <DatePicker x:Name="dpEnd" Width="120" Margin="0,0,10,0"/>
+            <Button Content="🧮 Рассчитать к выплате" Padding="10,5"
+                    Background="#3498DB" Foreground="White" Click="CalculateButton_Click"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="2" Text="Расчетный листок" FontWeight="Bold" Margin="0,5,0,5"/>
+
+        <DataGrid x:Name="PaymentDataGrid" Grid.Row="3" AutoGenerateColumns="False"
+                  AlternatingRowBackground="#F9F9F9" SelectionChanged="PaymentDataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Табельный номер" Binding="{Binding PersonalNumber}" Width="100"/>
+                <DataGridTextColumn Header="Сотрудник" Binding="{Binding FullName}" Width="150"/>
+                <DataGridTextColumn Header="Начислено" Binding="{Binding AccruedAmount, StringFormat=N2}" Width="100"/>
+                <DataGridTextColumn Header="Подоходный налог (13%)" Binding="{Binding IncomeTax, StringFormat=N2}" Width="120"/>
+                <DataGridTextColumn Header="Взносы (1%)" Binding="{Binding Contributions, StringFormat=N2}" Width="100"/>
+                <DataGridTextColumn Header="К выплате" Binding="{Binding NetAmount, StringFormat=N2}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Border Grid.Row="4" BorderBrush="#BDC3C7" BorderThickness="1" Margin="0,10,0,0" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="txtDetails" Text="Выберите сотрудника для просмотра деталей"/>
+                <Button Grid.Column="1" Content="🖨️ Печать" Padding="10,5"
+                        Background="#3498DB" Foreground="White" Click="PrintButton_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

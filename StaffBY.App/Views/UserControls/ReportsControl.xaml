@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="StaffBY.App.Views.UserControls.ReportsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Формирование отчетов" 
+                   FontSize="16" FontWeight="Bold" Margin="0,0,0,10"
+                   Foreground="#2C3E50"/>
+
+        <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+            <Button Content="👥 Список сотрудников" Padding="10,5" Margin="5"
+                    Background="#3498DB" Foreground="White" Click="EmployeeList_Click"/>
+            <Button Content="📈 Движение кадров" Padding="10,5" Margin="5"
+                    Background="#3498DB" Foreground="White" Click="MovementReport_Click"/>
+            <Button Content="🎂 Дни рождения" Padding="10,5" Margin="5"
+                    Background="#3498DB" Foreground="White" Click="BirthdaysReport_Click"/>
+            <Button Content="🏖️ Отчет по отпускам" Padding="10,5" Margin="5"
+                    Background="#3498DB" Foreground="White" Click="VacationsReport_Click"/>
+            <Button Content="📋 Воинский учет" Padding="10,5" Margin="5"
+                    Background="#3498DB" Foreground="White" Click="MilitaryReport_Click"/>
+        </WrapPanel>
+
+        <ScrollViewer Grid.Row="2">
+            <TextBlock x:Name="txtReport" FontFamily="Consolas" TextWrapping="Wrap"/>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

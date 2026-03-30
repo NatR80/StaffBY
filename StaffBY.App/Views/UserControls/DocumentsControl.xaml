@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="StaffBY.App.Views.UserControls.DocumentsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Создание документов" 
+                   FontSize="16" FontWeight="Bold" Margin="0,0,0,10"
+                   Foreground="#2C3E50"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <ComboBox x:Name="cmbDocumentType" Width="200" Margin="0,0,10,0">
+                <ComboBoxItem Content="Трудовой договор"/>
+                <ComboBoxItem Content="Приказ о приеме"/>
+                <ComboBoxItem Content="Приказ об увольнении"/>
+                <ComboBoxItem Content="Приказ об отпуске"/>
+            </ComboBox>
+            <ComboBox x:Name="cmbEmployee" Width="200" DisplayMemberPath="FullName" Margin="0,0,10,0"/>
+            <Button Content="📄 Сформировать документ" Padding="10,5"
+                    Background="#3498DB" Foreground="White" Click="GenerateButton_Click"/>
+        </StackPanel>
+
+        <Border Grid.Row="2" BorderBrush="#BDC3C7" BorderThickness="1" Padding="10">
+            <ScrollViewer>
+                <TextBlock x:Name="txtPreview" FontFamily="Consolas" TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>
