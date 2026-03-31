@@ -21,6 +21,7 @@ namespace StaffBY.App.ViewModels
         public string EducationInstitution { get; set; } = string.Empty;
         public DateTime? EducationEndDate { get; set; }
         public string Qualification { get; set; } = string.Empty;
+        
 
         // Паспортные данные
         public string PassportSeries { get; set; } = string.Empty;
@@ -34,6 +35,7 @@ namespace StaffBY.App.ViewModels
         // Контакты и адрес
         public string MaritalStatus { get; set; } = string.Empty;
         public string HomeAddress { get; set; } = string.Empty;
+        public string RegistrationAddress { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
@@ -65,5 +67,24 @@ namespace StaffBY.App.ViewModels
         public bool IsArchived { get; set; }
         public DateTime? DismissalDate { get; set; }
         public string DismissalReason { get; set; } = string.Empty;
+
+        // Дополнительная информация
+        public string AdditionalInfo { get; set; } = string.Empty;
+
+        
+
+        // Для дополнительных отпусков (если нужно сохранять)
+        public int ContractVacationDays { get; set; }      // За контракт
+        public int HarmfulVacationDays { get; set; }       // За вредность
+        public int IrregularVacationDays { get; set; }     // За ненормированный день
+        public int ExperienceVacationDays { get; set; }    // За стаж
+        public int BonusVacationDays { get; set; }         // Поощрительный
+
+        
+        
+
     }
+
+
+
 }

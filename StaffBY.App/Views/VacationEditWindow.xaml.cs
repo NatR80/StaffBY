@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
+using StaffBY.App.Views;
+using static StaffBY.App.Views.EmployeeEditWindow;  // Добавьте эту строку
+
+
 
 namespace StaffBY.App.Views
 {
@@ -9,7 +12,7 @@ namespace StaffBY.App.Views
         private VacationEntry _vacation;
         private bool _isEditMode;
 
-        public event EventHandler<VacationEntry> VacationSaved;
+        public event Action<VacationEntry> VacationSaved;
 
         public VacationEditWindow(VacationEntry vacation = null)
         {
@@ -26,46 +29,26 @@ namespace StaffBY.App.Views
                 _isEditMode = true;
                 _vacation = vacation;
                 Title = "Редактирование отпуска";
-                LoadData();
+                LoadVacationData();
             }
+
+            // Подписываемся на изменение дат для автоматического расчета дней
+            dpStartDate.SelectedDateChanged += Dates_SelectedDateChanged;
+            dpEndDate.SelectedDateChanged += Dates_SelectedDateChanged;
         }
 
-        private void LoadData()
+        private void LoadVacationData()
         {
-            // Загружаем данные из существующего отпуска
-            cmbVacationType.Text = _vacation.VacationType;
-            dpPeriodStart.SelectedDate = ParsePeriodStart(_vacation.Period);
-            dpPeriodEnd.SelectedDate = ParsePeriodEnd(_vacation.Period);
+            // Вид отпуска (если нужно)
+            dpPeriodStart.SelectedDate = _vacation.PeriodStart;
+            dpPeriodEnd.SelectedDate = _vacation.PeriodEnd;
             dpStartDate.SelectedDate = _vacation.StartDate;
             dpEndDate.SelectedDate = _vacation.EndDate;
-            txtDaysCount.Text = _vacation.DaysCount.ToString();
+            txtDaysCount.Text = _vacation.UsedDays.ToString();
             txtBasis.Text = _vacation.Basis;
         }
 
-        private DateTime? ParsePeriodStart(string period)
-        {
-            if (string.IsNullOrEmpty(period)) return null;
-            var parts = period.Split('-');
-            if (parts.Length > 0 && DateTime.TryParse(parts[0].Trim(), out DateTime start))
-                return start;
-            return null;
-        }
-
-        private DateTime? ParsePeriodEnd(string period)
-        {
-            if (string.IsNullOrEmpty(period)) return null;
-            var parts = period.Split('-');
-            if (parts.Length > 1 && DateTime.TryParse(parts[1].Trim(), out DateTime end))
-                return end;
-            return null;
-        }
-
-        private void EndDate_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            CalculateDays();
-        }
-
-        private void CalculateDays()
+        private void Dates_SelectedDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (dpStartDate.SelectedDate.HasValue && dpEndDate.SelectedDate.HasValue)
             {
@@ -82,71 +65,47 @@ namespace StaffBY.App.Views
                     txtDaysCount.Text = "0";
                 }
             }
-            else
-            {
-                txtDaysCount.Text = "0";
-            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // Проверка обязательных полей
-            if (cmbVacationType.SelectedItem == null)
+            try
             {
-                MessageBox.Show("Выберите вид отпуска", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+                if (!dpPeriodStart.SelectedDate.HasValue || !dpPeriodEnd.SelectedDate.HasValue)
+                {
+                    MessageBox.Show("Укажите рабочий период (за какой год предоставляется отпуск)", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-            if (!dpStartDate.SelectedDate.HasValue)
+                if (!dpStartDate.SelectedDate.HasValue || !dpEndDate.SelectedDate.HasValue)
+                {
+                    MessageBox.Show("Укажите даты начала и окончания отпуска", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                _vacation.PeriodStart = dpPeriodStart.SelectedDate.Value;
+                _vacation.PeriodEnd = dpPeriodEnd.SelectedDate.Value;
+                _vacation.StartDate = dpStartDate.SelectedDate.Value;
+                _vacation.EndDate = dpEndDate.SelectedDate.Value;
+
+                if (int.TryParse(txtDaysCount.Text, out int days))
+                    _vacation.UsedDays = days;
+                else
+                    _vacation.UsedDays = 0;
+
+                _vacation.Basis = txtBasis.Text;
+
+                VacationSaved?.Invoke(_vacation);
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show("Выберите дату начала отпуска", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            if (!dpEndDate.SelectedDate.HasValue)
-            {
-                MessageBox.Show("Выберите дату окончания отпуска", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (dpEndDate.SelectedDate < dpStartDate.SelectedDate)
-            {
-                MessageBox.Show("Дата окончания не может быть раньше даты начала", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            // РАСЧЕТ ДНЕЙ ПРЯМО ЗДЕСЬ
-            var start = dpStartDate.SelectedDate.Value;
-            var end = dpEndDate.SelectedDate.Value;
-            int days = (end - start).Days + 1;
-
-            // Сохраняем данные
-            _vacation.VacationType = (cmbVacationType.SelectedItem as ComboBoxItem)?.Content.ToString();
-
-            if (dpPeriodStart.SelectedDate.HasValue && dpPeriodEnd.SelectedDate.HasValue)
-            {
-                _vacation.Period = $"{dpPeriodStart.SelectedDate.Value:dd.MM.yyyy} - {dpPeriodEnd.SelectedDate.Value:dd.MM.yyyy}";
-            }
-
-            _vacation.StartDate = start;
-            _vacation.EndDate = end;
-            _vacation.DaysCount = days;  // Используем рассчитанные дни
-            _vacation.Basis = txtBasis.Text;
-
-            // Генерируем ID для нового отпуска
-            if (!_isEditMode)
-            {
-                _vacation.Id = DateTime.Now.Millisecond;
-            }
-
-            VacationSaved?.Invoke(this, _vacation);
-
-            DialogResult = true;
-            Close();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

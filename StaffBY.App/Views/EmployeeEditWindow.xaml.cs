@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using StaffBY.App.ViewModels;
-using StaffBY.App.Views;
 
 namespace StaffBY.App.Views
 {
@@ -45,7 +44,14 @@ namespace StaffBY.App.Views
             LoadPositionsAndDepartments();
             LoadVacations();
             LoadFamilyMembers();
-            UpdateVacationBalance();
+            UpdateVacationTotals();
+
+            // Подписываемся на события изменения дополнительных отпусков
+            txtContractVacation.TextChanged += AdditionalVacation_TextChanged;
+            txtHarmfulVacation.TextChanged += AdditionalVacation_TextChanged;
+            txtIrregularVacation.TextChanged += AdditionalVacation_TextChanged;
+            txtExperienceVacation.TextChanged += AdditionalVacation_TextChanged;
+            txtBonusVacation.TextChanged += AdditionalVacation_TextChanged;
         }
 
         private string GeneratePersonalNumber()
@@ -92,12 +98,14 @@ namespace StaffBY.App.Views
                 cmbMaritalStatus.Text = _employee.MaritalStatus;
 
             txtHomeAddress.Text = _employee.HomeAddress;
+            txtRegistrationAddress.Text = _employee.RegistrationAddress;
             txtPhone.Text = _employee.Phone;
             txtEmail.Text = _employee.Email;
 
             // Трудоустройство
             if (_employee.PositionId > 0)
                 cmbPosition.SelectedValue = _employee.PositionId;
+
             if (_employee.DepartmentId > 0)
                 cmbDepartment.SelectedValue = _employee.DepartmentId;
 
@@ -106,6 +114,7 @@ namespace StaffBY.App.Views
 
             if (!string.IsNullOrEmpty(_employee.EmploymentType))
                 cmbEmploymentType.Text = _employee.EmploymentType;
+
             if (!string.IsNullOrEmpty(_employee.ContractType))
                 cmbContractType.Text = _employee.ContractType;
 
@@ -122,6 +131,7 @@ namespace StaffBY.App.Views
             // Воинский учет
             if (!string.IsNullOrEmpty(_employee.MilitaryCategory))
                 cmbMilitaryCategory.Text = _employee.MilitaryCategory;
+
             if (!string.IsNullOrEmpty(_employee.MilitaryComposition))
                 cmbMilitaryComposition.Text = _employee.MilitaryComposition;
 
@@ -137,6 +147,9 @@ namespace StaffBY.App.Views
             dpRegistrationDate.SelectedDate = _employee.RegistrationDate;
             chkRemovedFromRegistry.IsChecked = _employee.IsRemovedFromRegistry;
             dpRemovalDate.SelectedDate = _employee.RemovalDate;
+
+            // Дополнительная информация
+            txtAdditionalInfo.Text = _employee.AdditionalInfo;
         }
 
         private string CalculateWorkExperience(DateTime hireDate)
@@ -156,7 +169,6 @@ namespace StaffBY.App.Views
 
         private void LoadPositionsAndDepartments()
         {
-            // TODO: Загрузить из базы данных
             cmbPosition.ItemsSource = new List<dynamic>
             {
                 new { Id = 1, Name = "Директор" },
@@ -174,34 +186,154 @@ namespace StaffBY.App.Views
             };
         }
 
+        // ==================== ОТПУСКА ====================
+
+        /// <summary>
+        /// Класс для хранения записи об отпуске
+        /// </summary>
+        public class VacationEntry
+        {
+            public int Id { get; set; }
+            public DateTime PeriodStart { get; set; }
+            public DateTime PeriodEnd { get; set; }
+            public int BasicDays { get; set; } = 24;
+            public int AdditionalDays { get; set; }
+            public int TotalDays => BasicDays + AdditionalDays;
+            public int UsedDays { get; set; }
+            public DateTime StartDate { get; set; }
+            public DateTime EndDate { get; set; }
+            public int RemainingDays => TotalDays - UsedDays;
+            public string Basis { get; set; } = string.Empty;
+            public string RemainingColor => RemainingDays <= 0 ? "Red" : "Green";
+        }
+
         private void LoadVacations()
         {
-            // TODO: Загрузить отпуска сотрудника из базы данных
             dgVacations.ItemsSource = _vacations;
+            UpdateVacationTotals();
         }
+
+        private void UpdateVacationTotals()
+        {
+            try
+            {
+                int contract = string.IsNullOrEmpty(txtContractVacation.Text) ? 0 : int.Parse(txtContractVacation.Text);
+                int harmful = string.IsNullOrEmpty(txtHarmfulVacation.Text) ? 0 : int.Parse(txtHarmfulVacation.Text);
+                int irregular = string.IsNullOrEmpty(txtIrregularVacation.Text) ? 0 : int.Parse(txtIrregularVacation.Text);
+                int experience = string.IsNullOrEmpty(txtExperienceVacation.Text) ? 0 : int.Parse(txtExperienceVacation.Text);
+                int bonus = string.IsNullOrEmpty(txtBonusVacation.Text) ? 0 : int.Parse(txtBonusVacation.Text);
+
+                int totalAdditional = contract + harmful + irregular + experience + bonus;
+                txtTotalAdditionalVacation.Text = totalAdditional.ToString();
+
+                int totalYear = 24 + totalAdditional;
+                txtTotalYearVacation.Text = totalYear.ToString();
+
+                int totalUsed = _vacations.Sum(v => v.UsedDays);
+                int totalRemaining = totalYear - totalUsed;
+                txtCurrentVacationBalance.Text = totalRemaining.ToString();
+
+                if (totalRemaining < 0)
+                    txtCurrentVacationBalance.Foreground = System.Windows.Media.Brushes.Red;
+                else
+                    txtCurrentVacationBalance.Foreground = System.Windows.Media.Brushes.Green;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ошибка: {ex.Message}");
+            }
+        }
+
+        private void AddVacation_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Функция добавления отпуска в разработке", "Информация",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void EditVacation_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgVacations.SelectedItem is VacationEntry selected)
+            {
+                MessageBox.Show($"Редактирование отпуска за период {selected.PeriodStart:dd.MM.yyyy} - {selected.PeriodEnd:dd.MM.yyyy}",
+                    "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Выберите отпуск для редактирования", "Внимание",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void DeleteVacation_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgVacations.SelectedItem is VacationEntry selected)
+            {
+                var result = MessageBox.Show($"Удалить запись об отпуске за период {selected.PeriodStart:dd.MM.yyyy} - {selected.PeriodEnd:dd.MM.yyyy}?",
+                    "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    _vacations.Remove(selected);
+                    LoadVacations();
+                    UpdateVacationTotals();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите отпуск для удаления", "Внимание",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void RecalculateVacationBalance_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateVacationTotals();
+            MessageBox.Show("Остатки отпуска пересчитаны", "Успех",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void AdditionalVacation_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateVacationTotals();
+        }
+
+        // ==================== СОСТАВ СЕМЬИ ====================
 
         private void LoadFamilyMembers()
         {
-            // TODO: Загрузить членов семьи из базы данных
             dgFamilyMembers.ItemsSource = _familyMembers;
         }
 
-        private void UpdateVacationBalance()
+        private void AddFamilyMember_Click(object sender, RoutedEventArgs e)
         {
-            // Расчет остатка дней отпуска (28 дней в год минус использованные)
-            int usedDays = _vacations.Sum(v => v.DaysCount);
-            int balance = 28 - usedDays;
-            txtVacationBalance.Text = balance.ToString();
-
-            if (balance < 0)
-                txtVacationBalance.Foreground = System.Windows.Media.Brushes.Red;
-            else
-                txtVacationBalance.Foreground = System.Windows.Media.Brushes.Green;
+            MessageBox.Show("Функция добавления члена семьи в разработке", "Информация",
+                MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void RemoveFamilyMember_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgFamilyMembers.SelectedItem is FamilyMemberEntry selected)
+            {
+                var result = MessageBox.Show($"Удалить члена семьи '{selected.FullName}'?",
+                    "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    _familyMembers.Remove(selected);
+                    LoadFamilyMembers();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите члена семьи для удаления", "Внимание",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        // ==================== СОХРАНЕНИЕ И ОТМЕНА ====================
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            // Проверка обязательных полей
             if (string.IsNullOrWhiteSpace(txtLastName.Text))
             {
                 MessageBox.Show("Введите фамилию сотрудника", "Ошибка",
@@ -226,7 +358,6 @@ namespace StaffBY.App.Views
                 return;
             }
 
-            // Сохраняем все данные в _employee
             _employee.PersonalNumber = txtPersonalNumber.Text;
             _employee.Gender = (cmbGender.SelectedItem as ComboBoxItem)?.Content.ToString();
             _employee.LastName = txtLastName.Text;
@@ -239,7 +370,6 @@ namespace StaffBY.App.Views
             _employee.EducationInstitution = txtEducationInstitution.Text;
             _employee.EducationEndDate = dpEducationEndDate.SelectedDate;
             _employee.Qualification = txtQualification.Text;
-
             _employee.PassportSeries = txtPassportSeries.Text;
             _employee.PassportNumber = txtPassportNumber.Text;
             _employee.PassportIssueDate = dpPassportIssueDate.SelectedDate;
@@ -249,10 +379,10 @@ namespace StaffBY.App.Views
             _employee.InsuranceNumber = txtInsuranceNumber.Text;
             _employee.MaritalStatus = (cmbMaritalStatus.SelectedItem as ComboBoxItem)?.Content.ToString();
             _employee.HomeAddress = txtHomeAddress.Text;
+            _employee.RegistrationAddress = txtRegistrationAddress.Text;
             _employee.Phone = txtPhone.Text;
             _employee.Email = txtEmail.Text;
 
-            // Трудоустройство
             if (cmbPosition.SelectedItem != null)
             {
                 dynamic pos = cmbPosition.SelectedItem;
@@ -276,7 +406,6 @@ namespace StaffBY.App.Views
             _employee.ContractType = (cmbContractType.SelectedItem as ComboBoxItem)?.Content.ToString();
             _employee.ContractEndDate = dpContractEndDate.SelectedDate;
 
-            // Воинский учет
             _employee.MilitaryCategory = (cmbMilitaryCategory.SelectedItem as ComboBoxItem)?.Content.ToString();
             _employee.MilitaryComposition = (cmbMilitaryComposition.SelectedItem as ComboBoxItem)?.Content.ToString();
             _employee.MilitaryRank = txtMilitaryRank.Text;
@@ -289,9 +418,9 @@ namespace StaffBY.App.Views
             _employee.IsRemovedFromRegistry = chkRemovedFromRegistry.IsChecked ?? false;
             _employee.RemovalDate = dpRemovalDate.SelectedDate;
 
-            // Вызываем событие сохранения
-            EmployeeSaved?.Invoke(this, _employee);
+            _employee.AdditionalInfo = txtAdditionalInfo.Text;
 
+            EmployeeSaved?.Invoke(this, _employee);
             DialogResult = true;
             Close();
         }
@@ -302,112 +431,51 @@ namespace StaffBY.App.Views
             Close();
         }
 
-        private void AddVacation_Click(object sender, RoutedEventArgs e)
+        // ==================== ФОТО И ФАМИЛИЯ И.О. ====================
+
+        private void AddPhotoButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Открыть окно добавления отпуска
-            var vacationWindow = new VacationEditWindow();
-            vacationWindow.VacationSaved += (s, vacation) =>
+            var dialog = new Microsoft.Win32.OpenFileDialog
             {
-                _vacations.Add(vacation);
-                LoadVacations();
-                UpdateVacationBalance();
+                Title = "Выберите фотографию сотрудника",
+                Filter = "Изображения (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp"
             };
-            vacationWindow.Owner = this;
-            vacationWindow.ShowDialog();
-        }
 
-        private void EditVacation_Click(object sender, RoutedEventArgs e)
-        {
-            if (dgVacations.SelectedItem is VacationEntry selectedVacation)
+            if (dialog.ShowDialog() == true)
             {
-                var vacationWindow = new VacationEditWindow(selectedVacation);
-                vacationWindow.VacationSaved += (s, vacation) =>
-                {
-                    var index = _vacations.FindIndex(v => v.Id == vacation.Id);
-                    if (index >= 0)
-                    {
-                        _vacations[index] = vacation;
-                        LoadVacations();
-                        UpdateVacationBalance();
-                    }
-                };
-                vacationWindow.Owner = this;
-                vacationWindow.ShowDialog();
-            }
-            else
-            {
-                MessageBox.Show("Выберите отпуск для редактирования", "Предупреждение",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Фото добавлено: {System.IO.Path.GetFileName(dialog.FileName)}",
+                    "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
-        private void DeleteVacation_Click(object sender, RoutedEventArgs e)
+        private void UpdateShortName()
         {
-            if (dgVacations.SelectedItem is VacationEntry selectedVacation)
-            {
-                var result = MessageBox.Show($"Удалить запись об отпуске?", "Подтверждение",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+            string lastName = txtLastName.Text;
+            string firstNameInitial = string.IsNullOrEmpty(txtFirstName.Text) ? "" : txtFirstName.Text[0] + ".";
+            string patronymicInitial = string.IsNullOrEmpty(txtPatronymic.Text) ? "" : txtPatronymic.Text[0] + ".";
 
-                if (result == MessageBoxResult.Yes)
-                {
-                    _vacations.Remove(selectedVacation);
-                    LoadVacations();
-                    UpdateVacationBalance();
-                }
-            }
-            else
-            {
-                MessageBox.Show("Выберите отпуск для удаления", "Предупреждение",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            txtShortName.Text = $"{lastName} {firstNameInitial}{patronymicInitial}".Trim();
         }
 
-        private void AddFamilyMember_Click(object sender, RoutedEventArgs e)
+        private void TxtLastName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // TODO: Открыть окно добавления члена семьи
-            var familyWindow = new FamilyMemberEditWindow();
-            familyWindow.MemberSaved += (s, member) =>
-            {
-                _familyMembers.Add(member);
-                LoadFamilyMembers();
-            };
-            familyWindow.Owner = this;
-            familyWindow.ShowDialog();
+            UpdateShortName();
         }
 
-        private void RemoveFamilyMember_Click(object sender, RoutedEventArgs e)
+        private void TxtFirstName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (dgFamilyMembers.SelectedItem is FamilyMemberEntry selectedMember)
-            {
-                var result = MessageBox.Show($"Удалить члена семьи '{selectedMember.FullName}'?", "Подтверждение",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+            UpdateShortName();
+        }
 
-                if (result == MessageBoxResult.Yes)
-                {
-                    _familyMembers.Remove(selectedMember);
-                    LoadFamilyMembers();
-                }
-            }
-            else
-            {
-                MessageBox.Show("Выберите члена семьи для удаления", "Предупреждение",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+        private void TxtPatronymic_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateShortName();
         }
     }
 
-    // Вспомогательные классы
-    public class VacationEntry
-    {
-        public int Id { get; set; }
-        public string VacationType { get; set; } = string.Empty;
-        public string Period { get; set; } = string.Empty;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public int DaysCount { get; set; }
-        public string Basis { get; set; } = string.Empty;
-    }
-
+    /// <summary>
+    /// Класс для хранения члена семьи
+    /// </summary>
     public class FamilyMemberEntry
     {
         public int Id { get; set; }
