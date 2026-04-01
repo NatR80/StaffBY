@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using StaffBY.App.ViewModels;
+using static StaffBY.App.Views.EmployeeEditWindow;
+
 
 namespace StaffBY.App.Views
 {
@@ -12,9 +14,7 @@ namespace StaffBY.App.Views
         private EmployeeViewModel _employee;
         private bool _isEditMode;
 
-        // Коллекция для отпусков
-        private List<VacationEntry> _vacations = new List<VacationEntry>();
-
+        
         // Коллекция для членов семьи
         private List<FamilyMemberEntry> _familyMembers = new List<FamilyMemberEntry>();
 
@@ -46,12 +46,10 @@ namespace StaffBY.App.Views
             LoadFamilyMembers();
             UpdateVacationTotals();
 
-            // Подписываемся на события изменения дополнительных отпусков
-            txtContractVacation.TextChanged += AdditionalVacation_TextChanged;
-            txtHarmfulVacation.TextChanged += AdditionalVacation_TextChanged;
-            txtIrregularVacation.TextChanged += AdditionalVacation_TextChanged;
-            txtExperienceVacation.TextChanged += AdditionalVacation_TextChanged;
-            txtBonusVacation.TextChanged += AdditionalVacation_TextChanged;
+            
+
+
+
         }
 
         private string GeneratePersonalNumber()
@@ -150,6 +148,14 @@ namespace StaffBY.App.Views
 
             // Дополнительная информация
             txtAdditionalInfo.Text = _employee.AdditionalInfo;
+
+            // Отпуска - загружаем нормы
+            txtContractDays.Text = _employee.ContractVacationDays.ToString();
+            txtHarmfulDays.Text = _employee.HarmfulVacationDays.ToString();
+            txtIrregularDays.Text = _employee.IrregularVacationDays.ToString();
+            txtExperienceDays.Text = _employee.ExperienceVacationDays.ToString();
+            txtBonusDays.Text = _employee.BonusVacationDays.ToString();
+
         }
 
         private string CalculateWorkExperience(DateTime hireDate)
@@ -200,71 +206,148 @@ namespace StaffBY.App.Views
             public int AdditionalDays { get; set; }
             public int TotalDays => BasicDays + AdditionalDays;
             public int UsedDays { get; set; }
-            public DateTime StartDate { get; set; }
-            public DateTime EndDate { get; set; }
+            public DateTime? StartDate { get; set; }
+            public DateTime? EndDate { get; set; }
             public int RemainingDays => TotalDays - UsedDays;
             public string Basis { get; set; } = string.Empty;
+            public string Schedule { get; set; } = string.Empty;
+            public string PeriodName => $"{PeriodStart:yyyy} - {PeriodEnd:yyyy}";
             public string RemainingColor => RemainingDays <= 0 ? "Red" : "Green";
         }
+        // ==================== ОТПУСКА ====================
 
+        // Список отпусков сотрудника
+        private List<VacationEntry> _vacations = new List<VacationEntry>();
+        private List<VacationEntry> _vacationsArchive = new List<VacationEntry>();
+
+        /// <summary>
+        /// Загрузка отпусков
+        /// </summary>
         private void LoadVacations()
         {
             dgVacations.ItemsSource = _vacations;
+            dgVacationsArchive.ItemsSource = _vacationsArchive;
             UpdateVacationTotals();
+            UpdateTotalRemaining();
         }
 
+        /// <summary>
+        /// Обновление итоговых сумм отпусков из правой колонки
+        /// </summary>
+        /// <summary>
+        /// Обновление итоговых сумм отпусков из правой колонки
+        /// </summary>
         private void UpdateVacationTotals()
         {
             try
             {
-                int contract = string.IsNullOrEmpty(txtContractVacation.Text) ? 0 : int.Parse(txtContractVacation.Text);
-                int harmful = string.IsNullOrEmpty(txtHarmfulVacation.Text) ? 0 : int.Parse(txtHarmfulVacation.Text);
-                int irregular = string.IsNullOrEmpty(txtIrregularVacation.Text) ? 0 : int.Parse(txtIrregularVacation.Text);
-                int experience = string.IsNullOrEmpty(txtExperienceVacation.Text) ? 0 : int.Parse(txtExperienceVacation.Text);
-                int bonus = string.IsNullOrEmpty(txtBonusVacation.Text) ? 0 : int.Parse(txtBonusVacation.Text);
+                // Проверяем, что текстовые поля существуют
+                if (txtContractDays == null || txtHarmfulDays == null ||
+                    txtIrregularDays == null || txtExperienceDays == null || txtBonusDays == null)
+                {
+                    return;
+                }
+
+                int contract = string.IsNullOrEmpty(txtContractDays.Text) ? 0 : int.Parse(txtContractDays.Text);
+                int harmful = string.IsNullOrEmpty(txtHarmfulDays.Text) ? 0 : int.Parse(txtHarmfulDays.Text);
+                int irregular = string.IsNullOrEmpty(txtIrregularDays.Text) ? 0 : int.Parse(txtIrregularDays.Text);
+                int experience = string.IsNullOrEmpty(txtExperienceDays.Text) ? 0 : int.Parse(txtExperienceDays.Text);
+                int bonus = string.IsNullOrEmpty(txtBonusDays.Text) ? 0 : int.Parse(txtBonusDays.Text);
 
                 int totalAdditional = contract + harmful + irregular + experience + bonus;
-                txtTotalAdditionalVacation.Text = totalAdditional.ToString();
+                txtTotalAdditional.Text = totalAdditional.ToString();
 
                 int totalYear = 24 + totalAdditional;
-                txtTotalYearVacation.Text = totalYear.ToString();
+                txtTotalYear.Text = totalYear.ToString();
 
-                int totalUsed = _vacations.Sum(v => v.UsedDays);
-                int totalRemaining = totalYear - totalUsed;
-                txtCurrentVacationBalance.Text = totalRemaining.ToString();
+                foreach (var vacation in _vacations)
+                {
+                    vacation.AdditionalDays = totalAdditional;
+                    vacation.BasicDays = 24;
+                }
 
-                if (totalRemaining < 0)
-                    txtCurrentVacationBalance.Foreground = System.Windows.Media.Brushes.Red;
-                else
-                    txtCurrentVacationBalance.Foreground = System.Windows.Media.Brushes.Green;
+                RefreshVacationsGrid();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Ошибка: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Ошибка в UpdateVacationTotals: {ex.Message}");
             }
         }
 
-        private void AddVacation_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Обновление остатка отпуска на сегодня
+        /// </summary>
+        private void UpdateTotalRemaining()
         {
-            MessageBox.Show("Функция добавления отпуска в разработке", "Информация",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            int totalRemaining = _vacations.Sum(v => v.RemainingDays);
+            txtTotalRemaining.Text = totalRemaining.ToString();
+
+            if (totalRemaining < 0)
+                txtTotalRemaining.Foreground = System.Windows.Media.Brushes.Red;
+            else
+                txtTotalRemaining.Foreground = System.Windows.Media.Brushes.Green;
         }
 
-        private void EditVacation_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Обновление таблицы отпусков
+        /// </summary>
+        private void RefreshVacationsGrid()
+        {
+            dgVacations.ItemsSource = null;
+            dgVacations.ItemsSource = _vacations;
+            UpdateTotalRemaining();
+        }
+
+        
+
+        /// <summary>
+        /// Добавление новой строки в таблицу
+        /// </summary>
+        private void AddVacationRow_Click(object sender, RoutedEventArgs e)
+        {
+            DateTime defaultStart = _vacations.Count > 0 ? _vacations.Last().PeriodEnd.AddDays(1) :
+                                    (_employee.HireDate.HasValue ? _employee.HireDate.Value : DateTime.Now);
+
+            var newVacation = new VacationEntry
+            {
+                Id = DateTime.Now.GetHashCode(),
+                PeriodStart = defaultStart,
+                PeriodEnd = defaultStart.AddYears(1).AddDays(-1),
+                BasicDays = 24,
+                AdditionalDays = int.TryParse(txtTotalAdditional.Text, out int add) ? add : 0,
+                UsedDays = 0,
+                StartDate = null,
+                EndDate = null,
+                Basis = "",
+                Schedule = ""
+            };
+
+            _vacations.Add(newVacation);
+            RefreshVacationsGrid();
+            UpdateVacationTotals();
+        }
+
+        /// <summary>
+        /// Редактирование выбранной строки (удаляем, добавляем новую)
+        /// </summary>
+        private void EditVacationRow_Click(object sender, RoutedEventArgs e)
         {
             if (dgVacations.SelectedItem is VacationEntry selected)
             {
-                MessageBox.Show($"Редактирование отпуска за период {selected.PeriodStart:dd.MM.yyyy} - {selected.PeriodEnd:dd.MM.yyyy}",
-                    "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Для редактирования просто открываем ячейку для редактирования
+                dgVacations.BeginEdit();
             }
             else
             {
-                MessageBox.Show("Выберите отпуск для редактирования", "Внимание",
+                MessageBox.Show("Выберите строку для редактирования", "Внимание",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        private void DeleteVacation_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Удаление выбранной строки
+        /// </summary>
+        private void DeleteVacationRow_Click(object sender, RoutedEventArgs e)
         {
             if (dgVacations.SelectedItem is VacationEntry selected)
             {
@@ -274,27 +357,93 @@ namespace StaffBY.App.Views
                 if (result == MessageBoxResult.Yes)
                 {
                     _vacations.Remove(selected);
-                    LoadVacations();
+                    RefreshVacationsGrid();
                     UpdateVacationTotals();
                 }
             }
             else
             {
-                MessageBox.Show("Выберите отпуск для удаления", "Внимание",
+                MessageBox.Show("Выберите строку для удаления", "Внимание",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        private void RecalculateVacationBalance_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Обработчик изменения дат в таблице
+        /// </summary>
+        private void VacationDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            UpdateVacationTotals();
-            MessageBox.Show("Остатки отпуска пересчитаны", "Успех",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            RefreshVacationsGrid();
         }
 
+        /// <summary>
+        /// Обработчик изменения даты начала отпуска - пересчет даты окончания
+        /// </summary>
+        private void VacationStartDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            var datePicker = sender as DatePicker;
+            if (datePicker?.DataContext is VacationEntry vacation)
+            {
+                if (vacation.StartDate.HasValue && vacation.UsedDays > 0)
+                {
+                    vacation.EndDate = vacation.StartDate.Value.AddDays(vacation.UsedDays - 1);
+                }
+                RefreshVacationsGrid();
+                UpdateTotalRemaining();
+            }
+        }
+
+        /// <summary>
+        /// Обработчик завершения редактирования ячейки
+        /// </summary>
+        private void dgVacations_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            // Обновляем расчеты после редактирования
+            if (e.Row.Item is VacationEntry vacation)
+            {
+                // Если изменилось количество дней - пересчитываем дату окончания
+                if (e.Column.DisplayIndex == 5) // Колонка "Использовано"
+                {
+                    if (vacation.StartDate.HasValue && vacation.UsedDays > 0)
+                    {
+                        vacation.EndDate = vacation.StartDate.Value.AddDays(vacation.UsedDays - 1);
+                    }
+                }
+
+                // Если изменилась дата начала - пересчитываем дату окончания
+                if (e.Column.DisplayIndex == 6) // Колонка "Дата начала"
+                {
+                    if (vacation.StartDate.HasValue && vacation.UsedDays > 0)
+                    {
+                        vacation.EndDate = vacation.StartDate.Value.AddDays(vacation.UsedDays - 1);
+                    }
+                }
+
+                RefreshVacationsGrid();
+                UpdateTotalRemaining();
+            }
+        }
+
+        /// <summary>
+        /// Обработчик начала редактирования
+        /// </summary>
+        private void dgVacations_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            // Можно добавить логику при начале редактирования
+        }
+
+        /// <summary>
+        /// Событие при изменении дополнительных отпусков
+        /// </summary>
         private void AdditionalVacation_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateVacationTotals();
+        }
+
+
+        public string GetTotalYearVacation()
+        {
+            return txtTotalYear.Text;
         }
 
         // ==================== СОСТАВ СЕМЬИ ====================

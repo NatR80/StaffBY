@@ -2,38 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Редактирование отпуска"
-        Height="480" Width="550"
+        Height="520" Width="550"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
-    <Window.Resources>
-        <Style x:Key="LabelStyle" TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="FontSize" Value="12"/>
-        </Style>
-
-        <Style x:Key="TextBoxStyle" TargetType="TextBox">
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-
-        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
-
-        <Style x:Key="DatePickerStyle" TargetType="DatePicker">
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-    </Window.Resources>
-
     <Grid Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -49,77 +24,76 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Заголовок -->
-        <TextBlock Grid.Row="0" 
-                   Text="Редактирование отпуска" 
-                   FontSize="16" 
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0,0,0,20"/>
+        <TextBlock Grid.Row="0" Text="Редактирование отпуска" 
+                   FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
-        <!-- Вид отпуска -->
-        <TextBlock Grid.Row="1" Text="Вид отпуска:" Style="{StaticResource LabelStyle}"/>
-        <ComboBox Grid.Row="2" x:Name="cmbVacationType" Style="{StaticResource ComboBoxStyle}">
-            <ComboBoxItem Content="Основной отпуск"/>
-            <ComboBoxItem Content="Дополнительный отпуск"/>
-            <ComboBoxItem Content="Социальный отпуск"/>
-            <ComboBoxItem Content="Учебный отпуск"/>
-            <ComboBoxItem Content="Отпуск без сохранения зарплаты"/>
-        </ComboBox>
-
-        <!-- За какой период -->
-        <TextBlock Grid.Row="3" Text="За какой период (рабочий год):" Style="{StaticResource LabelStyle}" Margin="5,15,5,5"/>
-        <Grid Grid.Row="4">
+        <!-- Период работы -->
+        <TextBlock Grid.Row="1" Text="Период работы:" FontWeight="Bold" Margin="0,5,0,5"/>
+        <Grid Grid.Row="2" Margin="0,0,0,15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <DatePicker Grid.Column="0" x:Name="dpPeriodStart" Style="{StaticResource DatePickerStyle}"/>
-            <TextBlock Grid.Column="1" Text="—" VerticalAlignment="Center" Margin="5,0,5,0"/>
-            <DatePicker Grid.Column="2" x:Name="dpPeriodEnd" Style="{StaticResource DatePickerStyle}"/>
+            <DatePicker x:Name="dpPeriodStart" Grid.Column="0" Height="30"/>
+            <TextBlock Grid.Column="1" Text="—" VerticalAlignment="Center" Margin="10,0,10,0"/>
+            <DatePicker x:Name="dpPeriodEnd" Grid.Column="2" Height="30"/>
         </Grid>
 
-        <!-- Дата начала и окончания -->
-        <TextBlock Grid.Row="5" Text="Дата отпуска:" Style="{StaticResource LabelStyle}" Margin="5,15,5,5"/>
-        <Grid Grid.Row="6">
+        <!-- Основной и дополнительный (только для чтения) -->
+        <Grid Grid.Row="3" Margin="0,10,0,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <DatePicker Grid.Column="0" x:Name="dpStartDate" Style="{StaticResource DatePickerStyle}"/>
-            <TextBlock Grid.Column="1" Text="—" VerticalAlignment="Center" Margin="5,0,5,0"/>
-            <DatePicker Grid.Column="2" x:Name="dpEndDate" Style="{StaticResource DatePickerStyle}"/>
+            <Border BorderBrush="#BDC3C7" BorderThickness="1" Padding="10" Margin="0,0,5,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Основной отпуск" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="1" x:Name="txtBasicDays" Text="24" FontSize="14"/>
+                </Grid>
+            </Border>
+            <Border Grid.Column="1" BorderBrush="#BDC3C7" BorderThickness="1" Padding="10" Margin="5,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Дополнительный отпуск" FontWeight="Bold"/>
+                    <TextBlock Grid.Row="1" x:Name="txtAdditionalDays" Text="0" FontSize="14"/>
+                </Grid>
+            </Border>
         </Grid>
 
-        <!-- Количество дней (рассчитывается автоматически) -->
-        <TextBlock Grid.Row="7" Text="Количество дней:" Style="{StaticResource LabelStyle}" Margin="5,15,5,5"/>
-        <TextBox Grid.Row="8" x:Name="txtDaysCount" Style="{StaticResource TextBoxStyle}" IsReadOnly="True" Background="#F0F0F0"/>
+        <!-- Использовано дней -->
+        <TextBlock Grid.Row="4" Text="Использовано дней:" Margin="0,10,0,5"/>
+        <TextBox Grid.Row="5" x:Name="txtUsedDays" Height="30" TextChanged="UsedDays_TextChanged"/>
+
+        <!-- Дата начала отпуска -->
+        <TextBlock Grid.Row="6" Text="Дата начала отпуска:" Margin="0,15,0,5"/>
+        <DatePicker Grid.Row="7" x:Name="dpStartDate" Height="30" SelectedDateChanged="StartDate_Changed"/>
+
+        <!-- Дата окончания (рассчитывается автоматически) -->
+        <TextBlock Grid.Row="8" Text="Дата окончания отпуска:" Margin="0,15,0,5"/>
+        <TextBox Grid.Row="9" x:Name="txtEndDate" Height="30" IsReadOnly="True" Background="#F0F0F0"/>
 
         <!-- Основание -->
-        <TextBlock Grid.Row="9" Text="Основание (приказ):" Style="{StaticResource LabelStyle}" Margin="5,15,5,5"/>
-        <TextBox Grid.Row="10" x:Name="txtBasis" Style="{StaticResource TextBoxStyle}" Height="60" TextWrapping="Wrap"/>
+        <TextBlock Grid.Row="10" Text="Основание (Приказ):" Margin="0,15,0,5"/>
+        <TextBox Grid.Row="11" x:Name="txtBasis" Height="30" Margin="0,0,0,15"/>
+
+        <!-- График отпуска -->
+        <TextBlock Grid.Row="12" Text="График отпуска:" Margin="0,5,0,5"/>
+        <TextBox Grid.Row="13" x:Name="txtSchedule" Height="30" Margin="0,0,0,15"/>
 
         <!-- Кнопки -->
-        <StackPanel Grid.Row="11" Orientation="Horizontal" 
-                    HorizontalAlignment="Right" 
-                    Margin="0,20,0,0">
-            <Button x:Name="btnSave" 
-                    Content="💾 Сохранить" 
-                    Width="100" 
-                    Height="35" 
-                    Margin="5"
-                    Background="#27AE60"
-                    Foreground="White"
-                    Click="SaveButton_Click"/>
-            <Button x:Name="btnCancel" 
-                    Content="❌ Отмена" 
-                    Width="100" 
-                    Height="35" 
-                    Margin="5"
+        <StackPanel Grid.Row="14" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="💾 Сохранить" Width="100" Height="35" Margin="5"
+                    Background="#27AE60" Foreground="White" Click="SaveButton_Click"/>
+            <Button Content="❌ Отмена" Width="100" Height="35" Margin="5"
                     Click="CancelButton_Click"/>
         </StackPanel>
-
     </Grid>
 </Window>

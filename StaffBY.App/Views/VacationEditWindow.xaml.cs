@@ -1,9 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
-using StaffBY.App.Views;
-using static StaffBY.App.Views.EmployeeEditWindow;  // Добавьте эту строку
-
-
+using static StaffBY.App.Views.EmployeeEditWindow;
 
 namespace StaffBY.App.Views
 {
@@ -11,18 +9,35 @@ namespace StaffBY.App.Views
     {
         private VacationEntry _vacation;
         private bool _isEditMode;
+        private int _totalDaysPerYear = 24;
 
         public event Action<VacationEntry> VacationSaved;
 
-        public VacationEditWindow(VacationEntry vacation = null)
+        public VacationEditWindow(VacationEntry vacation = null, DateTime? defaultPeriodStart = null)
         {
             InitializeComponent();
+
+            // Получаем общее количество дней из главного окна
+            var mainWindow = Application.Current.Windows.OfType<EmployeeEditWindow>().FirstOrDefault();
+            if (mainWindow != null)
+            {
+                // Получаем значение из правой колонки
+                var totalYearText = mainWindow.GetTotalYearVacation();
+                if (int.TryParse(totalYearText, out int totalYear))
+                    _totalDaysPerYear = totalYear;
+            }
 
             if (vacation == null)
             {
                 _isEditMode = false;
                 _vacation = new VacationEntry();
                 Title = "Добавление отпуска";
+
+                if (defaultPeriodStart.HasValue)
+                {
+                    dpPeriodStart.SelectedDate = defaultPeriodStart.Value;
+                    dpPeriodEnd.SelectedDate = defaultPeriodStart.Value.AddYears(1).AddDays(-1);
+                }
             }
             else
             {
@@ -32,38 +47,43 @@ namespace StaffBY.App.Views
                 LoadVacationData();
             }
 
-            // Подписываемся на изменение дат для автоматического расчета дней
-            dpStartDate.SelectedDateChanged += Dates_SelectedDateChanged;
-            dpEndDate.SelectedDateChanged += Dates_SelectedDateChanged;
+            txtBasicDays.Text = _totalDaysPerYear.ToString();
+            txtAdditionalDays.Text = "0"; // будет обновлено позже
         }
 
         private void LoadVacationData()
         {
-            // Вид отпуска (если нужно)
             dpPeriodStart.SelectedDate = _vacation.PeriodStart;
             dpPeriodEnd.SelectedDate = _vacation.PeriodEnd;
+            txtUsedDays.Text = _vacation.UsedDays.ToString();
             dpStartDate.SelectedDate = _vacation.StartDate;
-            dpEndDate.SelectedDate = _vacation.EndDate;
-            txtDaysCount.Text = _vacation.UsedDays.ToString();
             txtBasis.Text = _vacation.Basis;
+            txtSchedule.Text = _vacation.Schedule;
+
+            if (_vacation.EndDate.HasValue)
+                txtEndDate.Text = _vacation.EndDate.Value.ToString("dd.MM.yyyy");
         }
 
-        private void Dates_SelectedDateChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void UsedDays_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            if (dpStartDate.SelectedDate.HasValue && dpEndDate.SelectedDate.HasValue)
-            {
-                var start = dpStartDate.SelectedDate.Value;
-                var end = dpEndDate.SelectedDate.Value;
+            CalculateEndDate();
+        }
 
-                if (end >= start)
-                {
-                    int days = (end - start).Days + 1;
-                    txtDaysCount.Text = days.ToString();
-                }
-                else
-                {
-                    txtDaysCount.Text = "0";
-                }
+        private void StartDate_Changed(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            CalculateEndDate();
+        }
+
+        private void CalculateEndDate()
+        {
+            if (dpStartDate.SelectedDate.HasValue && int.TryParse(txtUsedDays.Text, out int days) && days > 0)
+            {
+                var endDate = dpStartDate.SelectedDate.Value.AddDays(days - 1);
+                txtEndDate.Text = endDate.ToString("dd.MM.yyyy");
+            }
+            else
+            {
+                txtEndDate.Text = "";
             }
         }
 
@@ -73,29 +93,37 @@ namespace StaffBY.App.Views
             {
                 if (!dpPeriodStart.SelectedDate.HasValue || !dpPeriodEnd.SelectedDate.HasValue)
                 {
-                    MessageBox.Show("Укажите рабочий период (за какой год предоставляется отпуск)", "Ошибка",
+                    MessageBox.Show("Укажите период работы", "Ошибка",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                if (!dpStartDate.SelectedDate.HasValue || !dpEndDate.SelectedDate.HasValue)
+                if (!int.TryParse(txtUsedDays.Text, out int usedDays) || usedDays < 0)
                 {
-                    MessageBox.Show("Укажите даты начала и окончания отпуска", "Ошибка",
+                    MessageBox.Show("Введите корректное количество дней", "Ошибка",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 _vacation.PeriodStart = dpPeriodStart.SelectedDate.Value;
                 _vacation.PeriodEnd = dpPeriodEnd.SelectedDate.Value;
-                _vacation.StartDate = dpStartDate.SelectedDate.Value;
-                _vacation.EndDate = dpEndDate.SelectedDate.Value;
+                _vacation.UsedDays = usedDays;
+                _vacation.StartDate = dpStartDate.SelectedDate;
 
-                if (int.TryParse(txtDaysCount.Text, out int days))
-                    _vacation.UsedDays = days;
+                if (dpStartDate.SelectedDate.HasValue && usedDays > 0)
+                    _vacation.EndDate = dpStartDate.SelectedDate.Value.AddDays(usedDays - 1);
                 else
-                    _vacation.UsedDays = 0;
+                    _vacation.EndDate = null;
 
                 _vacation.Basis = txtBasis.Text;
+                _vacation.Schedule = txtSchedule.Text;
+
+                if (!_isEditMode)
+                {
+                    _vacation.Id = DateTime.Now.GetHashCode();
+                    _vacation.BasicDays = 24;
+                    _vacation.AdditionalDays = 0; // будет обновлено из главной формы
+                }
 
                 VacationSaved?.Invoke(_vacation);
                 DialogResult = true;

@@ -467,6 +467,7 @@
                 </ScrollViewer>
             </TabItem>
 
+                         
             
             <!-- ========== Вкладка 4: Отпуска ========== -->
             <TabItem Header="🏖️ Отпуска">
@@ -474,183 +475,318 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Верхняя панель: Нормы отпусков -->
+                    <!-- Верхняя панель: кнопки и остаток -->
                     <Border Grid.Row="0" Background="#F8F9FA" BorderBrush="#BDC3C7" BorderThickness="1" Padding="10" Margin="0,0,0,10">
                         <Grid>
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Левая часть: Основной отпуск -->
-                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                                <TextBlock Text="Основной отпуск" FontWeight="Bold" FontSize="14" Margin="0,0,0,8"/>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150"/>
-                                        <ColumnDefinition Width="100"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Норма (по ТК РБ):" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="1" x:Name="txtBasicVacationNorm" Text="24" FontWeight="Bold" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="1" Text="дней" Margin="50,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
-                            </StackPanel>
+                            <Button Content="➕ Добавить строку" Padding="8,5" Margin="0,0,5,0"
+                Background="#3498DB" Foreground="White" Click="AddVacationRow_Click"/>
+                            <Button Content="✏️ Редактировать" Padding="8,5" Margin="5,0"
+                Background="#F39C12" Foreground="White" Click="EditVacationRow_Click"/>
+                            <Button Content="🗑️ Удалить" Padding="8,5" Margin="5,0"
+                Background="#E74C3C" Foreground="White" Click="DeleteVacationRow_Click"/>
 
-                            <!-- Правая часть: Дополнительные отпуска -->
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="Дополнительный отпуск" FontWeight="Bold" FontSize="14" Margin="0,0,0,8"/>
-
-                                <Grid Margin="0,0,0,5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="180"/>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="За работу по контракту:" VerticalAlignment="Center"/>
-                                    <TextBox x:Name="txtContractVacation" Width="60" Text="0" TextAlignment="Right" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="дней" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <Grid Margin="0,0,0,5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="180"/>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="За вредные условия труда:" VerticalAlignment="Center"/>
-                                    <TextBox x:Name="txtHarmfulVacation" Width="60" Text="0" TextAlignment="Right" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="дней" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <Grid Margin="0,0,0,5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="180"/>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="За ненормированный рабочий день:" VerticalAlignment="Center"/>
-                                    <TextBox x:Name="txtIrregularVacation" Width="60" Text="0" TextAlignment="Right" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="дней" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <Grid Margin="0,0,0,5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="180"/>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="За продолжительный стаж работы:" VerticalAlignment="Center"/>
-                                    <TextBox x:Name="txtExperienceVacation" Width="60" Text="0" TextAlignment="Right" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="дней" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <Grid Margin="0,0,0,5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="180"/>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Поощрительный отпуск:" VerticalAlignment="Center"/>
-                                    <TextBox x:Name="txtBonusVacation" Width="60" Text="0" TextAlignment="Right" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="дней" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <Separator Margin="0,5,0,5"/>
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="180"/>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="ИТОГО дополнительный отпуск:" FontWeight="Bold" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="txtTotalAdditionalVacation" Text="0" FontWeight="Bold" TextAlignment="Right" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="дней" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <Grid Margin="0,10,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="180"/>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="ВСЕГО отпуск за год:" FontWeight="Bold" FontSize="14" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="txtTotalYearVacation" Text="24" FontWeight="Bold" FontSize="14" TextAlignment="Right" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="дней" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
+                            <TextBlock Grid.Column="3" Text="Остаток отпуска на сегодня:" 
+                   FontSize="14" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <StackPanel Grid.Column="4" Orientation="Horizontal">
+                                <TextBlock x:Name="txtTotalRemaining" Text="0" FontSize="18" FontWeight="Bold" 
+                       Foreground="#27AE60" VerticalAlignment="Center"/>
+                                <TextBlock Text="дней" Margin="5,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
                     </Border>
+                    
+                    <!-- Основная таблица отпусков (редактируемая) -->
+                    <Border Grid.Row="1" BorderBrush="#BDC3C7" BorderThickness="1" Padding="10" Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
 
-                    <!-- Таблица учета отпусков -->
-                    <Grid Grid.Row="1" Margin="0,0,0,10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="ТАБЛИЦА ОТПУСКОВ" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
 
-                        <TextBlock Grid.Row="0" Text="История отпусков" FontWeight="Bold" FontSize="14" Margin="0,0,0,8"/>
-
-                        <DataGrid x:Name="dgVacations" Grid.Row="1" AutoGenerateColumns="False" SelectionMode="Single" CanUserAddRows="False" AlternatingRowBackground="#F9F9F9">
-                            <DataGrid.Columns>
-                                <DataGridTemplateColumn Header="Период работы" Width="150">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
+                            <DataGrid x:Name="dgVacations" Grid.Row="1" 
+                          AutoGenerateColumns="False" 
+                          SelectionMode="Single"
+                          CanUserAddRows="True"
+                          CanUserDeleteRows="True"
+                          AlternatingRowBackground="#F9F9F9"
+                          Height="300"
+                          Margin="0,0,0,10"
+                          CellEditEnding="dgVacations_CellEditEnding"
+                          BeginningEdit="dgVacations_BeginningEdit">
+                                <DataGrid.Columns>
+                                    <!-- Период работы (начало) -->
+                                    <DataGridTemplateColumn Header="Период работы (начало)" Width="110">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
                                                 <TextBlock Text="{Binding PeriodStart, StringFormat=dd.MM.yyyy}"/>
-                                                <TextBlock Text=" - " Margin="2,0"/>
-                                                <TextBlock Text="{Binding PeriodEnd, StringFormat=dd.MM.yyyy}"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Основной (24)" Binding="{Binding BasicDays}" Width="80"/>
-                                <DataGridTextColumn Header="Дополнительный" Binding="{Binding AdditionalDays}" Width="90"/>
-                                <DataGridTextColumn Header="Всего дней" Binding="{Binding TotalDays}" Width="80"/>
-                                <DataGridTextColumn Header="Использовано дней" Binding="{Binding UsedDays}" Width="100"/>
-                                <DataGridTemplateColumn Header="Период отпуска" Width="150">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}"/>
-                                                <TextBlock Text=" - " Margin="2,0"/>
-                                                <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Остаток" Binding="{Binding RemainingDays}" Width="70">
-                                    <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="DataGridCell">
-                                            <Setter Property="Foreground" Value="{Binding RemainingColor}"/>
-                                            <Setter Property="FontWeight" Value="Bold"/>
-                                        </Style>
-                                    </DataGridTextColumn.CellStyle>
-                                </DataGridTextColumn>
-                                <DataGridTextColumn Header="Основание (приказ)" Binding="{Binding Basis}" Width="*"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <DatePicker SelectedDate="{Binding PeriodStart, UpdateSourceTrigger=PropertyChanged}" 
+                                                SelectedDateChanged="VacationDateChanged"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
 
-                    <!-- Панель инструментов и итоги -->
-                    <StackPanel Grid.Row="2" Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Button Content="➕ Добавить отпуск" Padding="10,5" Click="AddVacation_Click" Background="#3498DB" Foreground="White"/>
-                            <Button Content="✏️ Редактировать" Padding="10,5" Margin="5,0,0,0" Click="EditVacation_Click" Background="#F39C12" Foreground="White"/>
-                            <Button Content="🗑️ Удалить" Padding="10,5" Margin="5,0,0,0" Click="DeleteVacation_Click" Background="#E74C3C" Foreground="White"/>
-                            <Button Content="🔄 Пересчитать остатки" Padding="10,5" Margin="5,0,0,0" Click="RecalculateVacationBalance_Click" Background="#27AE60" Foreground="White"/>
-                            <Separator Width="1" Background="#BDC3C7" Margin="15,0"/>
-                            <TextBlock Text="Остаток отпуска на сегодня:" VerticalAlignment="Center" Margin="15,0,5,0" FontWeight="Bold"/>
-                            <TextBlock x:Name="txtCurrentVacationBalance" Text="0" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Foreground="#27AE60"/>
-                            <TextBlock Text="дней" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    <!-- Период работы (окончание) -->
+                                    <DataGridTemplateColumn Header="Период работы (окончание)" Width="110">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding PeriodEnd, StringFormat=dd.MM.yyyy}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <DatePicker SelectedDate="{Binding PeriodEnd, UpdateSourceTrigger=PropertyChanged}" 
+                                                SelectedDateChanged="VacationDateChanged"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Основной отпуск (только чтение) -->
+                                    <DataGridTextColumn Header="Основной" Binding="{Binding BasicDays}" Width="60" IsReadOnly="True"/>
+
+                                    <!-- Дополнительный отпуск (только чтение) -->
+                                    <DataGridTextColumn Header="Дополнительный" Binding="{Binding AdditionalDays}" Width="80" IsReadOnly="True"/>
+
+                                    <!-- Всего дней (только чтение) -->
+                                    <DataGridTextColumn Header="Всего дней" Binding="{Binding TotalDays}" Width="70" IsReadOnly="True">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="DataGridCell">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+
+                                    <!-- Использовано дней (редактируемое) -->
+                                    <DataGridTextColumn Header="Использовано" Binding="{Binding UsedDays, UpdateSourceTrigger=PropertyChanged}" Width="80">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="DataGridCell">
+                                                <Setter Property="Background" Value="#FFF9E6"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+
+                                    <!-- Дата начала отпуска -->
+                                    <DataGridTemplateColumn Header="Дата начала" Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding StartDate, StringFormat=dd.MM.yyyy}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <DatePicker SelectedDate="{Binding StartDate, UpdateSourceTrigger=PropertyChanged}" 
+                                                SelectedDateChanged="VacationStartDateChanged"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Дата окончания (рассчитывается автоматически) -->
+                                    <DataGridTemplateColumn Header="Дата окончания" Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding EndDate, StringFormat=dd.MM.yyyy}" Background="#F0F0F0" Padding="5"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Остаток (только чтение) -->
+                                    <DataGridTextColumn Header="Остаток" Binding="{Binding RemainingDays}" Width="60" IsReadOnly="True">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="DataGridCell">
+                                                <Setter Property="Foreground" Value="{Binding RemainingColor}"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+
+                                    <!-- Основание (Приказ) -->
+                                    <DataGridTextColumn Header="Основание (Приказ)" Binding="{Binding Basis, UpdateSourceTrigger=PropertyChanged}" Width="100">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="DataGridCell">
+                                                <Setter Property="Background" Value="#FFF9E6"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+
+                                    <!-- График -->
+                                    <DataGridTextColumn Header="График" Binding="{Binding Schedule, UpdateSourceTrigger=PropertyChanged}" Width="80">
+                                        <DataGridTextColumn.CellStyle>
+                                            <Style TargetType="DataGridCell">
+                                                <Setter Property="Background" Value="#FFF9E6"/>
+                                            </Style>
+                                        </DataGridTextColumn.CellStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Архив (сворачиваемый) -->
+                    <Expander Grid.Row="2" Header="▶ АРХИВ (нажмите чтобы развернуть/свернуть)" 
+                  Margin="0,0,0,10" IsExpanded="False">
+                        <Border BorderBrush="#BDC3C7" BorderThickness="1" Padding="10" Margin="0,5,0,0">
+                            <DataGrid x:Name="dgVacationsArchive" 
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True"
+                          AlternatingRowBackground="#F9F9F9"
+                          Height="150">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Период работы" Binding="{Binding PeriodName}" Width="100"/>
+                                    <DataGridTextColumn Header="Всего дней" Binding="{Binding TotalDays}" Width="70"/>
+                                    <DataGridTextColumn Header="Использовано" Binding="{Binding UsedDays}" Width="80"/>
+                                    <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                                    <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                                    <DataGridTextColumn Header="Остаток" Binding="{Binding RemainingDays}" Width="60"/>
+                                    <DataGridTextColumn Header="Основание" Binding="{Binding Basis}" Width="100"/>
+                                    <DataGridTextColumn Header="График" Binding="{Binding Schedule}" Width="80"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </Expander>
+
+                    
+                    <!-- Нормы отпусков за год -->
+
+                    <!-- Нормы отпусков за год -->
+                    <Border Grid.Row="3" BorderBrush="#BDC3C7" BorderThickness="1" Padding="10" Margin="0,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="НОРМЫ ОТПУСКОВ ЗА ГОД" 
+                   FontWeight="Bold" FontSize="14" Margin="0,0,0,10" HorizontalAlignment="Center"/>
+
+                            <!-- Первая строка: Основной отпуск и Дополнительный отпуск (всего) в ряд -->
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="Основной отпуск:" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" x:Name="txtBasicNorm" Text="24" FontWeight="Bold" VerticalAlignment="Center" Margin="5,0,10,0"/>
+                                <TextBlock Grid.Column="2" Text="дней" VerticalAlignment="Center" Margin="0,0,15,0"/>
+
+                                <TextBlock Grid.Column="3" Text="Дополнительный отпуск (всего):" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="4" x:Name="txtTotalAdditional" Text="0" FontWeight="Bold" Foreground="#27AE60" VerticalAlignment="Center" Margin="5,0,5,0"/>
+                                <TextBlock Grid.Column="5" Text="дней" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Вторая строка: перечисления дополнительных отпусков -->
+                            <WrapPanel Margin="0,5,0,0" HorizontalAlignment="Left">
+
+                                <Border BorderBrush="#BDC3C7" BorderThickness="1" Padding="5,2" Margin="0,0,10,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="45"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="за контракт:" VerticalAlignment="Center" FontSize="11" Margin="0,0,3,0"/>
+                                        <TextBox x:Name="txtContractDays" Width="45" Text="0" TextAlignment="Center" 
+                             TextChanged="AdditionalVacation_TextChanged" FontSize="11"/>
+                                        <TextBlock Grid.Column="2" Text="дн." VerticalAlignment="Center" FontSize="11" Margin="3,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border BorderBrush="#BDC3C7" BorderThickness="1" Padding="5,2" Margin="0,0,10,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="45"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="за вредность:" VerticalAlignment="Center" FontSize="11" Margin="0,0,3,0"/>
+                                        <TextBox x:Name="txtHarmfulDays" Width="45" Text="0" TextAlignment="Center" 
+                             TextChanged="AdditionalVacation_TextChanged" FontSize="11"/>
+                                        <TextBlock Grid.Column="2" Text="дн." VerticalAlignment="Center" FontSize="11" Margin="3,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border BorderBrush="#BDC3C7" BorderThickness="1" Padding="5,2" Margin="0,0,10,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="45"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="ненормир. день:" VerticalAlignment="Center" FontSize="11" Margin="0,0,3,0"/>
+                                        <TextBox x:Name="txtIrregularDays" Width="45" Text="0" TextAlignment="Center" 
+                             TextChanged="AdditionalVacation_TextChanged" FontSize="11"/>
+                                        <TextBlock Grid.Column="2" Text="дн." VerticalAlignment="Center" FontSize="11" Margin="3,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border BorderBrush="#BDC3C7" BorderThickness="1" Padding="5,2" Margin="0,0,10,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="45"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="за стаж:" VerticalAlignment="Center" FontSize="11" Margin="0,0,3,0"/>
+                                        <TextBox x:Name="txtExperienceDays" Width="45" Text="0" TextAlignment="Center" 
+                             TextChanged="AdditionalVacation_TextChanged" FontSize="11"/>
+                                        <TextBlock Grid.Column="2" Text="дн." VerticalAlignment="Center" FontSize="11" Margin="3,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                                <Border BorderBrush="#BDC3C7" BorderThickness="1" Padding="5,2" Margin="0,0,10,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="45"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="поощрительный:" VerticalAlignment="Center" FontSize="11" Margin="0,0,3,0"/>
+                                        <TextBox x:Name="txtBonusDays" Width="45" Text="0" TextAlignment="Center" 
+                             TextChanged="AdditionalVacation_TextChanged" FontSize="11"/>
+                                        <TextBlock Grid.Column="2" Text="дн." VerticalAlignment="Center" FontSize="11" Margin="3,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
+                            </WrapPanel>
+
+                            <!-- Итоговая строка: ВСЕГО отпуск за год -->
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="ВСЕГО отпуск за год:" FontWeight="Bold" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" x:Name="txtTotalYear" Text="24" FontWeight="Bold" FontSize="16" Foreground="#2C3E50" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                <TextBlock Grid.Column="2" Text="дней" VerticalAlignment="Center"/>
+                            </Grid>
                         </StackPanel>
-                        <TextBlock x:Name="txtVacationInfo" Text="✓ Основной отпуск: 24 дня. Для добавления отпуска нажмите 'Добавить отпуск'" Foreground="Gray" FontSize="11" Margin="0,5,0,0"/>
-                    </StackPanel>
+                    </Border>
                 </Grid>
             </TabItem>
+
             <!-- ========== Вкладка 5: Состав семьи ========== -->
             <TabItem Header="👨‍👩‍👧 Состав семьи">
                 <Grid Margin="10">
