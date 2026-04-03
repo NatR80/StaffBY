@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using StaffBY.App.ViewModels;
+using StaffBY.App.Views;
 
 namespace StaffBY.App.Views.UserControls
 {
@@ -21,8 +22,6 @@ namespace StaffBY.App.Views.UserControls
         public event Action<string>? StatusMessageChanged;   // Для статусной строки
         public event Action<int>? EmployeeCountChanged;     // Для счетчика сотрудников
         public event Action? EmployeesChanged;               // НОВОЕ СОБЫТИЕ: при изменении списка сотрудников
-
-        
 
         // КОНСТРУКТОР
         public EmployeesControl()
@@ -177,7 +176,8 @@ namespace StaffBY.App.Views.UserControls
         /// </summary>
         private void AddEmployeeButton_Click(object sender, RoutedEventArgs e)
         {
-            var editWindow = new EmployeeEditWindow();
+            // Исправлено: передаем null для нового сотрудника
+            var editWindow = new EmployeeEditWindow(null);
             editWindow.EmployeeSaved += (s, employee) =>
             {
                 // Генерируем новый ID

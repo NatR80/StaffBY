@@ -43,7 +43,7 @@
                 <uc:PositionsControl x:Name="PositionsControl"/>
             </TabItem>
             <TabItem Header="🏖️ Отпуска">
-                <uc:VacationsControl x:Name="VacationsControl"/>
+                <uc:VacationsAllControl x:Name="VacationsAllControl"/>
             </TabItem>
             <TabItem Header="📅 Табель">
                 <uc:TimesheetControl x:Name="TimesheetControl"/>

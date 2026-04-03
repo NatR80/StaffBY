@@ -4,6 +4,8 @@ using System.Windows;
 using StaffBY.Domain.Entities;
 using StaffBY.App.Views.UserControls;
 using StaffBY.App.ViewModels;
+using System.Collections.Generic;
+using StaffBY.App.Models;
 
 namespace StaffBY.App.Views
 {
@@ -43,8 +45,8 @@ namespace StaffBY.App.Views
             if (PositionsControl != null)
                 PositionsControl.StatusMessageChanged += msg => StatusText.Text = msg;
 
-            if (VacationsControl != null)
-                VacationsControl.StatusMessageChanged += msg => StatusText.Text = msg;
+            if (VacationsAllControl != null)
+                VacationsAllControl.StatusMessageChanged += msg => StatusText.Text = msg;
 
             if (TimesheetControl != null)
                 TimesheetControl.StatusMessageChanged += msg => StatusText.Text = msg;
@@ -88,7 +90,7 @@ namespace StaffBY.App.Views
                 ReportsControl?.SetEmployees(activeEmployees);
 
                 // Для отпусков нужны активные сотрудники
-                var vacations = VacationsControl?.GetVacations() ?? new System.Collections.Generic.List<VacationViewModel>();
+                var vacations = VacationsAllControl?.GetVacations() ?? new System.Collections.Generic.List<VacationViewModel>();
                 ReportsControl?.SetVacations(vacations);
 
                 StatusText.Text = $"Данные загружены. Сотрудников: {activeEmployees.Count}, в архиве: {allEmployees.Count - activeEmployees.Count}";

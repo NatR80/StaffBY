@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Windows;
+using StaffBY.App.Models;
+using System.Collections.Generic;
+
+
 
 namespace StaffBY.App.Views
 {
@@ -33,7 +37,7 @@ namespace StaffBY.App.Views
         {
             txtFullName.Text = _member.FullName;
             cmbRelationship.Text = _member.Relationship;
-            txtBirthYear.Text = _member.BirthYear.ToString();
+            txtBirthYear.Text = _member.BirthYear > 0 ? _member.BirthYear.ToString() : "";
             txtWorkPlace.Text = _member.WorkPlace;
         }
 
@@ -77,7 +81,7 @@ namespace StaffBY.App.Views
             // Генерируем ID для нового члена семьи
             if (!_isEditMode)
             {
-                _member.Id = DateTime.Now.Millisecond;
+                _member.Id = DateTime.Now.GetHashCode();
             }
 
             MemberSaved?.Invoke(this, _member);

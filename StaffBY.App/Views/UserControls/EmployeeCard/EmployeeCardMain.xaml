@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="StaffBY.App.Views.UserControls.EmployeeCard.EmployeeCardMain"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:card="clr-namespace:StaffBY.App.Views.UserControls.EmployeeCard">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#34495E" Padding="10" Margin="-10,0,-10,10">
+            <TextBlock x:Name="txtTitle" Text="ЛИЧНАЯ КАРТОЧКА РАБОТНИКА (форма Т-2)"
+                       FontSize="18" FontWeight="Bold" Foreground="White" 
+                       HorizontalAlignment="Center"/>
+        </Border>
+
+        <TabControl Grid.Row="1" x:Name="MainTabControl" Margin="0,0,0,10">
+            <TabItem Header="📋 Общие сведения">
+                <card:CommonInfoControl x:Name="CommonInfo"/>
+            </TabItem>
+            <TabItem Header="💼 Трудоустройство">
+                <card:EmploymentControl x:Name="Employment"/>
+            </TabItem>
+            <TabItem Header="🎖️ Воинский учет">
+                <card:MilitaryControl x:Name="Military"/>
+            </TabItem>
+            <TabItem Header="🏖️ Отпуска">
+                <card:VacationsControl x:Name="Vacations"/>
+            </TabItem>
+            <TabItem Header="👨‍👩‍👧 Состав семьи">
+                <card:FamilyControl x:Name="Family"/>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="💾 Сохранить" Width="120" Height="35" Margin="5"
+                    Background="#27AE60" Foreground="White" Click="SaveButton_Click"/>
+            <Button Content="❌ Отмена" Width="100" Height="35" Margin="5"
+                    Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

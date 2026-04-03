@@ -1,4 +1,6 @@
 ﻿using System;
+using StaffBY.App.Models;
+using System.Collections.Generic;
 
 
 namespace StaffBY.App.ViewModels
@@ -12,6 +14,7 @@ namespace StaffBY.App.ViewModels
         public string FirstName { get; set; } = string.Empty;
         public string Patronymic { get; set; } = string.Empty;
         public string FullName => $"{LastName} {FirstName} {Patronymic}".Trim();
+        
 
         // Общие сведения
         public DateTime BirthDate { get; set; }
@@ -80,8 +83,10 @@ namespace StaffBY.App.ViewModels
         public int ExperienceVacationDays { get; set; }    // За стаж
         public int BonusVacationDays { get; set; }         // Поощрительный
 
-        
-        
+        // Для членов семьи
+        public List<FamilyMemberEntry> FamilyMembers { get; set; } = new List<FamilyMemberEntry>();
+
+
 
     }
 
