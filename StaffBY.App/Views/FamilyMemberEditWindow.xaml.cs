@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using StaffBY.App.Models;
-using System.Collections.Generic;
-
-
 
 namespace StaffBY.App.Views
 {
@@ -37,8 +35,14 @@ namespace StaffBY.App.Views
         {
             txtFullName.Text = _member.FullName;
             cmbRelationship.Text = _member.Relationship;
-            txtBirthYear.Text = _member.BirthYear > 0 ? _member.BirthYear.ToString() : "";
+            dpBirthDate.SelectedDate = _member.BirthDate != DateTime.MinValue ? _member.BirthDate : (DateTime?)null;
             txtWorkPlace.Text = _member.WorkPlace;
+
+            // Установка документа в комбобокс
+            if (!string.IsNullOrEmpty(_member.Document))
+            {
+                cmbDocument.Text = _member.Document;
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -52,40 +56,41 @@ namespace StaffBY.App.Views
                 return;
             }
 
-            if (cmbRelationship.SelectedItem == null)
+            if (cmbRelationship.SelectedItem == null && string.IsNullOrWhiteSpace(cmbRelationship.Text))
             {
-                MessageBox.Show("Выберите степень родства", "Ошибка",
+                MessageBox.Show("Выберите или введите степень родства", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Проверка года рождения
-            int birthYear = 0;
-            if (!string.IsNullOrWhiteSpace(txtBirthYear.Text))
+            // Проверка даты рождения
+            DateTime birthDate = DateTime.MinValue;
+            if (dpBirthDate.SelectedDate.HasValue)
             {
-                if (!int.TryParse(txtBirthYear.Text, out birthYear) || birthYear < 1900 || birthYear > DateTime.Now.Year)
+                birthDate = dpBirthDate.SelectedDate.Value;
+                if (birthDate > DateTime.Now)
                 {
-                    MessageBox.Show("Введите корректный год рождения (1900-2026)", "Ошибка",
+                    MessageBox.Show("Дата рождения не может быть в будущем", "Ошибка",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtBirthYear.Focus();
+                    dpBirthDate.Focus();
                     return;
                 }
             }
 
             // Сохраняем данные
-            _member.FullName = txtFullName.Text;
-            _member.Relationship = (cmbRelationship.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content.ToString();
-            _member.BirthYear = birthYear;
-            _member.WorkPlace = txtWorkPlace.Text;
+            _member.FullName = txtFullName.Text.Trim();
+            _member.Relationship = cmbRelationship.Text;
+            _member.BirthDate = birthDate;
+            _member.WorkPlace = txtWorkPlace.Text.Trim();
+            _member.Document = cmbDocument.Text.Trim();
 
             // Генерируем ID для нового члена семьи
             if (!_isEditMode)
             {
-                _member.Id = DateTime.Now.GetHashCode();
+                _member.Id = Math.Abs(Guid.NewGuid().GetHashCode());
             }
 
             MemberSaved?.Invoke(this, _member);
-
             DialogResult = true;
             Close();
         }

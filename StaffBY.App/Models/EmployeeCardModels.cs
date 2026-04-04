@@ -26,7 +26,7 @@ namespace StaffBY.App.Models
 
     }
 
-    
+
     /// <summary>
     /// Класс для хранения члена семьи
     /// </summary>
@@ -35,7 +35,29 @@ namespace StaffBY.App.Models
         public int Id { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string Relationship { get; set; } = string.Empty;
-        public int BirthYear { get; set; }
-        public string WorkPlace { get; set; } = string.Empty;
+
+        private DateTime _birthDate;
+        public DateTime BirthDate
+        {
+            get => _birthDate;
+            set
+            {
+                _birthDate = value;
+                BirthYear = value.Year;
+            }
+        }
+
+        public int BirthYear { get; private set; }
+        public string WorkPlace { get; set; } = string.Empty; // Место работы, учебы
+        public string Document { get; set; } = string.Empty; // Документ (свидетельство о рождении, паспорт, справка)
+
+        // Для обратной совместимости с существующим кодом
+        public string FullInfo => $"{FullName} ({Relationship})";
+
+        // Для отображения даты рождения в строковом формате
+        public string BirthDateString => BirthDate == DateTime.MinValue ? "" : BirthDate.ToString("dd.MM.yyyy");
     }
+
+
+
 }

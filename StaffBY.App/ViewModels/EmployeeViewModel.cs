@@ -83,7 +83,11 @@ namespace StaffBY.App.ViewModels
         public int ExperienceVacationDays { get; set; }    // За стаж
         public int BonusVacationDays { get; set; }         // Поощрительный
 
+        
+        /// Количество детей и иждивенцев (для ручного ввода кадровиком)        
+        public int DependentsCount { get; set; }
         // Для членов семьи
+
         public List<FamilyMemberEntry> FamilyMembers { get; set; } = new List<FamilyMemberEntry>();
 
 

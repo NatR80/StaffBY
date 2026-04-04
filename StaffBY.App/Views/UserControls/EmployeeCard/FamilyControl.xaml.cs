@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using StaffBY.App.Models;
@@ -10,15 +12,32 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
     {
         private List<FamilyMemberEntry> _familyMembers = new();
 
+        // Свойство для детей и иждивенцев
+        public int DependentsCount
+        {
+            get
+            {
+                if (int.TryParse(txtDependents.Text, out int result))
+                    return result;
+                return 0;
+            }
+            set => txtDependents.Text = value.ToString();
+        }
+
         public FamilyControl()
         {
             InitializeComponent();
+            txtDependents.TextChanged += (s, e) => OnDependentsChanged?.Invoke();
         }
 
-        public void LoadData(List<FamilyMemberEntry> familyMembers)
+        // Событие при изменении количества иждивенцев
+        public event Action OnDependentsChanged;
+
+        public void LoadData(List<FamilyMemberEntry> familyMembers, int dependents = 0)
         {
             _familyMembers = familyMembers ?? new List<FamilyMemberEntry>();
             dgFamilyMembers.ItemsSource = _familyMembers;
+            txtDependents.Text = dependents.ToString();
         }
 
         public List<FamilyMemberEntry> GetFamilyMembers() => _familyMembers;
