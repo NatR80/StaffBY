@@ -129,6 +129,48 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
         }
 
         /// <summary>
+        /// Добавить отпуск в выбранный период
+        /// </summary>
+        private void AddVacationToPeriod_Click(object sender, RoutedEventArgs e)
+        {
+            if (dgVacations.SelectedItem is not VacationEntry selectedPeriod)
+            {
+                MessageBox.Show("Сначала выберите период отпуска в таблице!", "Внимание",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Проверяем остаток дней
+            if (selectedPeriod.RemainingDays <= 0)
+            {
+                MessageBox.Show($"В периоде {selectedPeriod.PeriodName} остаток дней = {selectedPeriod.RemainingDays}.\n" +
+                    "Нельзя добавить отпуск, так как все дни уже использованы.",
+                    "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Открываем окно для ввода нового отпуска в этом периоде
+            var dialog = new VacationEntryWindow(selectedPeriod);
+            dialog.VacationEntrySaved += (days, startDate, basis) =>
+            {
+                // Добавляем использованные дни к существующим
+                selectedPeriod.UsedDays += days;
+                selectedPeriod.StartDate = startDate;
+                selectedPeriod.EndDate = startDate.AddDays(days - 1);
+                selectedPeriod.Basis = basis;
+
+                RefreshVacationsGrid();
+                UpdateVacationTotals();
+
+                MessageBox.Show($"Отпуск на {days} дней добавлен в период {selectedPeriod.PeriodName}.\n" +
+                    $"Остаток дней: {selectedPeriod.RemainingDays}",
+                    "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+            };
+            dialog.Owner = Window.GetWindow(this);
+            dialog.ShowDialog();
+        }
+
+        /// <summary>
         /// При изменении даты начала отпуска автоматически рассчитываем дату окончания
         /// </summary>
         private void VacationStartDateChanged(object sender, SelectionChangedEventArgs e)
