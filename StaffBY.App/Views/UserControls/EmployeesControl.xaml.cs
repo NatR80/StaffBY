@@ -176,8 +176,7 @@ namespace StaffBY.App.Views.UserControls
         /// </summary>
         private void AddEmployeeButton_Click(object sender, RoutedEventArgs e)
         {
-            // Исправлено: передаем null для нового сотрудника
-            var editWindow = new EmployeeEditWindow(null);
+            var editWindow = new EmployeeEditWindow(null);  // null = новый сотрудник
             editWindow.EmployeeSaved += (s, employee) =>
             {
                 // Генерируем новый ID

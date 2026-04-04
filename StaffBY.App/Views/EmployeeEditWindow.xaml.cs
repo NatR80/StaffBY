@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Windows;
 using StaffBY.App.ViewModels;
-using System.Collections.Generic;
-using StaffBY.App.Models;
 
 namespace StaffBY.App.Views
 {
     public partial class EmployeeEditWindow : Window
     {
-        private EmployeeViewModel _employee;
-        private bool _isNewEmployee;
-
         public event EventHandler<EmployeeViewModel>? EmployeeSaved;
 
         public EmployeeEditWindow(EmployeeViewModel? employee = null)
@@ -19,8 +14,7 @@ namespace StaffBY.App.Views
 
             if (employee == null)
             {
-                _isNewEmployee = true;
-                _employee = new EmployeeViewModel
+                employee = new EmployeeViewModel
                 {
                     PersonalNumber = GeneratePersonalNumber()
                 };
@@ -28,12 +22,10 @@ namespace StaffBY.App.Views
             }
             else
             {
-                _isNewEmployee = false;
-                _employee = employee;
                 Title = $"Редактирование сотрудника: {employee.LastName} {employee.FirstName}";
             }
 
-            EmployeeCard.LoadData(_employee);
+            EmployeeCard.LoadData(employee);
             EmployeeCard.EmployeeSaved += EmployeeCard_EmployeeSaved;
         }
 
@@ -44,9 +36,12 @@ namespace StaffBY.App.Views
 
         private void EmployeeCard_EmployeeSaved(object? sender, EmployeeViewModel e)
         {
+            // Просто вызываем событие, НЕ закрываем окно
             EmployeeSaved?.Invoke(this, e);
-            DialogResult = true;
-            Close();
+
+            // Убираем Close() - окно остается открытым!
+            // DialogResult = true;
+            // Close();
         }
     }
 }

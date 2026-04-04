@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using StaffBY.App.ViewModels;
 using StaffBY.App.Models;
-
+using StaffBY.App.Views;
 
 namespace StaffBY.App.Views.UserControls.EmployeeCard
 {
@@ -101,35 +102,84 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
         private void AdditionalVacation_TextChanged(object sender, TextChangedEventArgs e)
             => UpdateVacationTotals();
 
+        /// <summary>
+        /// Добавление нового периода отпуска
+        /// </summary>
         private void AddVacationRow_Click(object sender, RoutedEventArgs e)
         {
-            var newVacation = new VacationEntry
+            if (_employee == null) return;
+
+            DateTime? periodStart = _employee.HireDate;
+            if (!periodStart.HasValue)
             {
-                Id = DateTime.Now.GetHashCode(),
-                PeriodStart = DateTime.Now,
-                PeriodEnd = DateTime.Now.AddYears(1).AddDays(-1),
-                BasicDays = 24,
-                UsedDays = 0
+                periodStart = new DateTime(DateTime.Today.Year, 1, 1);
+            }
+
+            int additionalDays = ParseInt(txtTotalAdditional.Text);
+
+            var dialog = new VacationEditWindow(null, periodStart, additionalDays);
+            dialog.VacationSaved += (vacation) =>
+            {
+                _vacations.Add(vacation);
+                RefreshVacationsGrid();
+                UpdateVacationTotals();
             };
-            _vacations.Add(newVacation);
-            RefreshVacationsGrid();
+            dialog.Owner = Window.GetWindow(this);
+            dialog.ShowDialog();
         }
 
+        /// <summary>
+        /// При изменении даты начала отпуска автоматически рассчитываем дату окончания
+        /// </summary>
+        private void VacationStartDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var datePicker = sender as DatePicker;
+            if (datePicker?.DataContext is VacationEntry vacation)
+            {
+                if (vacation.StartDate.HasValue && vacation.UsedDays > 0)
+                {
+                    vacation.EndDate = vacation.StartDate.Value.AddDays(vacation.UsedDays - 1);
+                    RefreshVacationsGrid();
+
+                    // Проверка правила 14 дней
+                    if (vacation.UsedDays < 14 && vacation.UsedDays > 0)
+                    {
+                        MessageBox.Show(
+                            "Внимание! Согласно законодательству, одна часть отпуска должна быть не менее 14 календарных дней.\n\n" +
+                            $"Текущая часть отпуска составляет {vacation.UsedDays} дней.\n\n" +
+                            "Рекомендуем скорректировать количество дней.",
+                            "Проверка законодательства",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                    }
+                }
+                else if (vacation.StartDate.HasValue)
+                {
+                    vacation.EndDate = null;
+                    RefreshVacationsGrid();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Редактирование по двойному клику
+        /// </summary>
+        private void DgVacations_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgVacations.SelectedItem is VacationEntry selected)
+            {
+                EditVacation(selected);
+            }
+        }
+
+        /// <summary>
+        /// Кнопка редактирования
+        /// </summary>
         private void EditVacationRow_Click(object sender, RoutedEventArgs e)
         {
             if (dgVacations.SelectedItem is VacationEntry selected)
             {
-                var dialog = new VacationEditWindow(selected);
-                dialog.VacationSaved += (vacation) =>
-                {
-                    var index = _vacations.FindIndex(v => v.Id == vacation.Id);
-                    if (index >= 0) _vacations[index] = vacation;
-                    
-                    RefreshVacationsGrid();
-                    UpdateVacationTotals();
-                };
-                dialog.Owner = Window.GetWindow(this);
-                dialog.ShowDialog();
+                EditVacation(selected);
             }
             else
             {
@@ -138,11 +188,36 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
             }
         }
 
+        /// <summary>
+        /// Редактирование отпуска
+        /// </summary>
+        private void EditVacation(VacationEntry selected)
+        {
+            int additionalDays = ParseInt(txtTotalAdditional.Text);
+
+            var dialog = new VacationEditWindow(selected, null, additionalDays);
+            dialog.VacationSaved += (vacation) =>
+            {
+                var index = _vacations.FindIndex(v => v.Id == vacation.Id);
+                if (index >= 0)
+                {
+                    _vacations[index] = vacation;
+                    RefreshVacationsGrid();
+                    UpdateVacationTotals();
+                }
+            };
+            dialog.Owner = Window.GetWindow(this);
+            dialog.ShowDialog();
+        }
+
+        /// <summary>
+        /// Кнопка удаления
+        /// </summary>
         private void DeleteVacationRow_Click(object sender, RoutedEventArgs e)
         {
             if (dgVacations.SelectedItem is VacationEntry selected)
             {
-                if (MessageBox.Show("Удалить запись об отпуске?", "Подтверждение",
+                if (MessageBox.Show($"Удалить период отпуска {selected.PeriodName}?", "Подтверждение",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     _vacations.Remove(selected);
@@ -150,6 +225,16 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
                     UpdateVacationTotals();
                 }
             }
+            else
+            {
+                MessageBox.Show("Выберите отпуск для удаления", "Внимание",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void dgVacations_SelectionChanged()
+        {
+
         }
     }
 }

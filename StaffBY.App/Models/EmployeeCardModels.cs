@@ -18,12 +18,15 @@ namespace StaffBY.App.Models
         public int UsedDays { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public DateTime? AvailableFrom { get; set; }  // Предоставляется отпуск с
         public int RemainingDays => TotalDays - UsedDays;
         public string Basis { get; set; } = string.Empty;
         public string Schedule { get; set; } = string.Empty;
         public string PeriodName => $"{PeriodStart:yyyy} - {PeriodEnd:yyyy}";
+
     }
 
+    
     /// <summary>
     /// Класс для хранения члена семьи
     /// </summary>

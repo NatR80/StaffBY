@@ -1,7 +1,8 @@
-﻿using StaffBY.App.Models;
-using StaffBY.App.ViewModels;
-using System.Windows.Controls;
+﻿using System;
 using System.Windows;
+using System.Windows.Controls;
+using StaffBY.App.ViewModels;
+using StaffBY.App.Models;
 
 namespace StaffBY.App.Views.UserControls.EmployeeCard
 {
@@ -38,10 +39,16 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
             Vacations.SaveData();
             _employee.FamilyMembers = Family.GetFamilyMembers();
 
+            // Просто вызываем событие, НЕ закрываем окно
             EmployeeSaved?.Invoke(this, _employee);
 
-            var window = Window.GetWindow(this);
-            window?.Close();
+            // Убираем закрытие окна!
+            // var window = Window.GetWindow(this);
+            // window?.Close();
+
+            // Показываем сообщение об успешном сохранении
+            MessageBox.Show($"Данные сотрудника {_employee.FullName} успешно сохранены!",
+                "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
