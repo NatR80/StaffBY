@@ -41,6 +41,9 @@ namespace StaffBY.App.ViewModels
         public string RegistrationAddress { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        // Дополнительная информация
+        public string AdditionalInfo { get; set; } = string.Empty;
+
 
         // Трудоустройство
         public int? PositionId { get; set; }
@@ -52,6 +55,27 @@ namespace StaffBY.App.ViewModels
         public string EmploymentType { get; set; } = string.Empty;
         public string ContractType { get; set; } = string.Empty;
         public DateTime? ContractEndDate { get; set; }
+        public decimal? Allowance { get; set; }           // Надбавка
+        public decimal? Rate { get; set; }                // Ставка (1, 0.75, 0.5, 0.25)
+        public int HoursPerDay { get; set; } = 8;         // Часов в день
+        public int? Grade { get; set; }                   // Тарифный разряд
+        public decimal? Coefficient { get; set; } = 1.0m; // Тарифный коэффициент
+        public int? IntensityPercent { get; set; }        // Повышение за интенсивность %
+        public int? ContractPercent { get; set; }         // Повышение за контракт %
+        public string? WorkWeek { get; set; }             // Рабочая неделя
+        public string? Category { get; set; }             // Категория
+        public string? WorkConditions { get; set; }       // Условия труда
+        public bool IsPensioner { get; set; }             // Пенсионер
+        public bool IsDisabled { get; set; }              // Инвалид
+        public DateTime? DismissalDate { get; set; }      // Дата увольнения
+        //public string? AdditionalInfo { get; set; }       // Дополнительные сведения                                                          
+        public string? EmploymentAdditionalInfo { get; set; } = string.Empty; //дополнительные сведения
+
+        // Коллекции для таблиц
+        public List<EmploymentHistoryDto> EmploymentHistory { get; set; } = new();
+        public List<AdvancedTrainingDto> AdvancedTraining { get; set; } = new();
+        public List<CertificationDto> Certifications { get; set; } = new();
+
 
         // Воинский учет
         public string MilitaryCategory { get; set; } = string.Empty;
@@ -68,11 +92,9 @@ namespace StaffBY.App.ViewModels
 
         // Статус
         public bool IsArchived { get; set; }
-        public DateTime? DismissalDate { get; set; }
         public string DismissalReason { get; set; } = string.Empty;
 
-        // Дополнительная информация
-        public string AdditionalInfo { get; set; } = string.Empty;
+        
 
         
 

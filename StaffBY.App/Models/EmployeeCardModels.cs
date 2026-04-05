@@ -58,6 +58,31 @@ namespace StaffBY.App.Models
         public string BirthDateString => BirthDate == DateTime.MinValue ? "" : BirthDate.ToString("dd.MM.yyyy");
     }
 
+    public class EmploymentHistoryDto
+    {
+        public int Id { get; set; }
+        public DateTime AssignmentDate { get; set; }
+        public string? DepartmentName { get; set; }
+        public string? PositionName { get; set; }
+        public string? OrderNumber { get; set; }
+    }
+
+    public class AdvancedTrainingDto
+    {
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public string? Name { get; set; }  // Вид или специальность
+        public string? DocumentNumber { get; set; }
+    }
+
+    public class CertificationDto
+    {
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public string? Decision { get; set; }
+    }
+
+
 
 
 }
