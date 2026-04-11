@@ -71,30 +71,59 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
         {
             try
             {
-                if (txtContractDays == null) return;
+                // ===== КРИТИЧЕСКИ ВАЖНО: проверяем все поля на null =====
+                if (txtContractDays == null || txtHarmfulDays == null ||
+                    txtIrregularDays == null || txtExperienceDays == null ||
+                    txtBonusDays == null || txtTotalAdditional == null ||
+                    txtTotalYear == null)
+                {
+                    return; // Элементы еще не созданы - выходим без ошибки
+                }
 
-                int contract = ParseInt(txtContractDays.Text);
-                int harmful = ParseInt(txtHarmfulDays.Text);
-                int irregular = ParseInt(txtIrregularDays.Text);
-                int experience = ParseInt(txtExperienceDays.Text);
-                int bonus = ParseInt(txtBonusDays.Text);
+                // Безопасное получение значений (используем TryParse вместо Parse)
+                int contract = ParseIntSafe(txtContractDays.Text);
+                int harmful = ParseIntSafe(txtHarmfulDays.Text);
+                int irregular = ParseIntSafe(txtIrregularDays.Text);
+                int experience = ParseIntSafe(txtExperienceDays.Text);
+                int bonus = ParseIntSafe(txtBonusDays.Text);
 
                 int totalAdditional = contract + harmful + irregular + experience + bonus;
                 txtTotalAdditional.Text = totalAdditional.ToString();
-                int totalYear = 24 + totalAdditional;
+
+                int totalYear = 24 + totalAdditional;  // 24 дня - основной отпуск в РБ
                 txtTotalYear.Text = totalYear.ToString();
 
-                foreach (var vacation in _vacations)
+                // Обновляем дополнительные дни для каждого отпуска
+                if (_vacations != null)
                 {
-                    vacation.AdditionalDays = totalAdditional;
-                    vacation.BasicDays = 24;
+                    foreach (var vacation in _vacations)
+                    {
+                        if (vacation != null)
+                        {
+                            vacation.AdditionalDays = totalAdditional;
+                            vacation.BasicDays = 24;
+                        }
+                    }
+                    RefreshVacationsGrid();
                 }
-                RefreshVacationsGrid();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Ошибка: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Ошибка в UpdateVacationTotals: {ex.Message}");
+                // Не показываем MessageBox, чтобы не раздражать пользователя
             }
+        }
+
+        // Новый безопасный метод парсинга
+        private int ParseIntSafe(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0;
+
+            if (int.TryParse(text, out int result))
+                return result;
+
+            return 0;
         }
 
         private int ParseInt(string text) => string.IsNullOrEmpty(text) ? 0 : int.Parse(text);
