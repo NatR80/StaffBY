@@ -25,9 +25,14 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
     <ProjectReference Include="..\StaffBY.Business\StaffBY.Business.csproj" />
     <ProjectReference Include="..\StaffBY.DAL\StaffBY.DAL.csproj" />
     <ProjectReference Include="..\StaffBY.Domain\StaffBY.Domain.csproj" />
   </ItemGroup>
 
+	
 </Project>

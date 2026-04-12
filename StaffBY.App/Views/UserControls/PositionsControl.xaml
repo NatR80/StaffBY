@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
-    
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d">
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,23 +16,31 @@
                    FontSize="16" FontWeight="Bold" Margin="0,0,0,10"
                    Foreground="#2C3E50"/>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
-            <Button Content="➕ Добавить должность" Padding="10,5" Margin="5"
-                    Background="#27AE60" Foreground="White" Click="AddPositionButton_Click"/>
-            <Button Content="✏️ Редактировать" Padding="10,5" Margin="5"
-                    Background="#3498DB" Foreground="White" Click="EditPositionButton_Click"/>
-            <Button Content="🗑️ Удалить" Padding="10,5" Margin="5"
-                    Background="#E74C3C" Foreground="White" Click="DeletePositionButton_Click"/>
-        </StackPanel>
+        <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+            <Button Content="🏢 Добавить подразделение" Padding="10,5" Margin="2"
+            Background="#8E44AD" Foreground="White" Click="AddDepartmentButton_Click"/>
+            <Button Content="➕ Добавить должность" Padding="10,5" Margin="2"
+            Background="#27AE60" Foreground="White" Click="AddPositionButton_Click"/>
+            <Button Content="✏️ Редактировать" Padding="10,5" Margin="2"
+            Background="#3498DB" Foreground="White" Click="EditPositionButton_Click"/>
+            <Button Content="🗑️ Удалить" Padding="10,5" Margin="2"
+            Background="#E74C3C" Foreground="White" Click="DeletePositionButton_Click"/>
+        </WrapPanel>
 
         <DataGrid x:Name="PositionsDataGrid" Grid.Row="2" AutoGenerateColumns="False"
-                  SelectionMode="Single" AlternatingRowBackground="#F9F9F9">
+                  SelectionMode="Single" AlternatingRowBackground="#F9F9F9"
+                  CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Должность" Binding="{Binding Name}" Width="200"/>
-                <DataGridTextColumn Header="Отдел" Binding="{Binding DepartmentName}" Width="150"/>
-                <DataGridTextColumn Header="Количество ставок" Binding="{Binding NumberOfPositions}" Width="120"/>
-                <DataGridTextColumn Header="Оклад (руб.)" Binding="{Binding Salary, StringFormat=N2}" Width="120"/>
-                <DataGridTextColumn Header="Надбавка (руб.)" Binding="{Binding Allowance, StringFormat=N2}" Width="120"/>
+                <DataGridTextColumn Header="Подразделение" Binding="{Binding DepartmentName}" Width="150"/>
+                <DataGridTextColumn Header="Должность" Binding="{Binding Name}" Width="180"/>
+                <DataGridTextColumn Header="Штатных единиц" Binding="{Binding StaffUnits}" Width="100"/>
+                <DataGridTextColumn Header="Занято" Binding="{Binding FilledPositions}" Width="80"/>
+                <DataGridTextColumn Header="Вакансии" Binding="{Binding Vacancies}" Width="80"/>
+                <DataGridTextColumn Header="Ставка" Binding="{Binding Rate}" Width="80"/>
+                <DataGridTextColumn Header="Рабочая неделя" Binding="{Binding WorkWeek}" Width="120"/>
+                <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="100"/>
+                <DataGridTextColumn Header="Оклад (руб.)" Binding="{Binding Salary, StringFormat=N2}" Width="100"/>
+                <DataGridTextColumn Header="Надбавка (руб.)" Binding="{Binding Allowance, StringFormat=N2}" Width="100"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
