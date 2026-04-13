@@ -90,7 +90,7 @@
                 <!-- ========== Строка 0: Должность + Отдел ========== -->
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Должность:" VerticalAlignment="Center" Margin="5,2"/>
                 <ComboBox Grid.Row="0" Grid.Column="1" x:Name="cmbPosition" 
-                          DisplayMemberPath="Title" SelectedValuePath="Id"
+                          DisplayMemberPath="Name" SelectedValuePath="Id"
                           Margin="5,2" Height="28"
                           SelectionChanged="CmbPosition_SelectionChanged"/>
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="Отдел:" VerticalAlignment="Center" Margin="5,2"/>

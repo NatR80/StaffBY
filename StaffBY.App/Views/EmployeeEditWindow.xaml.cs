@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using StaffBY.App.ViewModels;
+using StaffBY.App.ViewModels.StaffBY.App.ViewModels;
+using StaffBY.App.Views.UserControls.EmployeeCard;
 
 namespace StaffBY.App.Views
 {
@@ -8,40 +11,27 @@ namespace StaffBY.App.Views
     {
         public event EventHandler<EmployeeViewModel>? EmployeeSaved;
 
-        public EmployeeEditWindow(EmployeeViewModel? employee = null)
+        public EmployeeEditWindow(EmployeeViewModel? employee = null, List<PositionViewModel>? positions = null)
         {
             InitializeComponent();
 
             if (employee == null)
             {
-                employee = new EmployeeViewModel
-                {
-                    PersonalNumber = GeneratePersonalNumber()
-                };
-                Title = "Добавление нового сотрудника";
+                Title = "Новый сотрудник";
+                EmployeeCard.LoadData(new EmployeeViewModel(), positions ?? new List<PositionViewModel>());
             }
             else
             {
-                Title = $"Редактирование сотрудника: {employee.LastName} {employee.FirstName}";
+                Title = $"Редактирование сотрудника: {employee.FullName}";
+                EmployeeCard.LoadData(employee, positions ?? new List<PositionViewModel>());
             }
 
-            EmployeeCard.LoadData(employee);
-            EmployeeCard.EmployeeSaved += EmployeeCard_EmployeeSaved;
-        }
-
-        private string GeneratePersonalNumber()
-        {
-            return DateTime.Now.ToString("yyMMddHHmmss");
-        }
-
-        private void EmployeeCard_EmployeeSaved(object? sender, EmployeeViewModel e)
-        {
-            // Просто вызываем событие, НЕ закрываем окно
-            EmployeeSaved?.Invoke(this, e);
-
-            // Убираем Close() - окно остается открытым!
-            // DialogResult = true;
-            // Close();
+            EmployeeCard.EmployeeSaved += (s, savedEmployee) =>
+            {
+                EmployeeSaved?.Invoke(this, savedEmployee);
+                DialogResult = true;
+                Close();
+            };
         }
     }
 }

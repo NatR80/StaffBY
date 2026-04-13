@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using StaffBY.App.ViewModels;
 using StaffBY.App.Models;
+using StaffBY.App.ViewModels.StaffBY.App.ViewModels;
 
 namespace StaffBY.App.Views.UserControls.EmployeeCard
 {
@@ -17,16 +19,17 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
             InitializeComponent();
         }
 
-        public void LoadData(EmployeeViewModel employee)
+        public void LoadData(EmployeeViewModel employee, List<PositionViewModel> positions)
         {
             _employee = employee ?? throw new ArgumentNullException(nameof(employee));
             txtTitle.Text = $"ЛИЧНАЯ КАРТОЧКА РАБОТНИКА (форма Т-2) - {employee.FullName}";
 
             CommonInfo.LoadData(employee);
+            Employment.LoadPositions(positions);
             Employment.LoadData(employee);
             Military.LoadData(employee);
             Vacations.LoadData(employee);
-            Family.LoadData(employee?.FamilyMembers ?? new System.Collections.Generic.List<FamilyMemberEntry>());
+            Family.LoadData(employee?.FamilyMembers ?? new List<FamilyMemberEntry>());
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -39,14 +42,8 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
             Vacations.SaveData();
             _employee.FamilyMembers = Family.GetFamilyMembers();
 
-            // Просто вызываем событие, НЕ закрываем окно
             EmployeeSaved?.Invoke(this, _employee);
 
-            // Убираем закрытие окна!
-            // var window = Window.GetWindow(this);
-            // window?.Close();
-
-            // Показываем сообщение об успешном сохранении
             MessageBox.Show($"Данные сотрудника {_employee.FullName} успешно сохранены!",
                 "Сохранение", MessageBoxButton.OK, MessageBoxImage.Information);
         }

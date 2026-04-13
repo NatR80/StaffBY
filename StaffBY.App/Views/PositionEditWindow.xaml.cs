@@ -4,19 +4,20 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using StaffBY.App.Models;
+using StaffBY.App.ViewModels;
+using StaffBY.App.ViewModels.StaffBY.App.ViewModels;
 
 namespace StaffBY.App.Views
 {
     public partial class PositionEditWindow : Window
     {
-        private PositionInStaffModel _position;
+        private PositionViewModel _position;
         private bool _isEdit;
         private List<string> _departments;
 
-        public PositionInStaffModel? Result { get; private set; }
+        public PositionViewModel? Result { get; private set; }
 
-        public PositionEditWindow(PositionInStaffModel? position = null, List<string>? departments = null)
+        public PositionEditWindow(PositionViewModel? position = null, List<string>? departments = null)
         {
             InitializeComponent();
 
@@ -40,7 +41,7 @@ namespace StaffBY.App.Views
             else
             {
                 _isEdit = false;
-                _position = new PositionInStaffModel();
+                _position = new PositionViewModel();
                 Title = "Новая должность";
             }
         }
@@ -49,9 +50,9 @@ namespace StaffBY.App.Views
         {
             cmbDepartment.Text = _position.DepartmentName;
             txtName.Text = _position.Name;
-            txtStaffUnits.Text = _position.StaffUnits.ToString();
+            txtStaffUnits.Text = _position.NumberOfPositions.ToString();
 
-            // Выбор ставки (исправлено: сравниваем как decimal)
+            // Выбор ставки
             decimal rateValue = _position.Rate;
             foreach (ComboBoxItem item in cmbRate.Items)
             {
@@ -90,9 +91,9 @@ namespace StaffBY.App.Views
             _position.Name = txtName.Text;
 
             if (int.TryParse(txtStaffUnits.Text, out int units))
-                _position.StaffUnits = units;
+                _position.NumberOfPositions = units;
 
-            // ИСПРАВЛЕНО: безопасное преобразование ставки
+            // Безопасное преобразование ставки
             if (cmbRate.SelectedItem is ComboBoxItem rateItem)
             {
                 string rateString = rateItem.Content.ToString();

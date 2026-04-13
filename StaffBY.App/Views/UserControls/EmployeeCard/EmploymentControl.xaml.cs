@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using StaffBY.App.Models;
 using StaffBY.App.ViewModels;
+using StaffBY.App.ViewModels.StaffBY.App.ViewModels;
 
 namespace StaffBY.App.Views.UserControls.EmployeeCard
 {
@@ -12,12 +13,24 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
     {
         private EmployeeViewModel? _employee;
         private bool _isLoading = false;
-
+        // Добавить в начало класса:
+        private List<PositionViewModel> _positions = new List<PositionViewModel>();
+        
         public EmploymentControl()
         {
             InitializeComponent();
         }
 
+        // Добавить НОВЫЙ метод для загрузки списка должностей
+        public void LoadPositions(List<PositionViewModel> positions)
+        {
+            _positions = positions;
+            cmbPosition.Items.Clear();
+            foreach (var pos in positions)
+            {
+                cmbPosition.Items.Add(pos);
+            }
+        }
         // Загрузка данных сотрудника
         public void LoadData(EmployeeViewModel employee)
         {
@@ -221,9 +234,40 @@ namespace StaffBY.App.Views.UserControls.EmployeeCard
 
         private void CmbPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!_isLoading && _employee != null)
+            if (_isLoading || _employee == null) return;
+
+            if (cmbPosition.SelectedItem is PositionViewModel selected)
             {
-                // Обновить выбранную должность
+                _employee.PositionId = selected.Id;
+                _employee.PositionName = selected.Name;
+                _employee.DepartmentName = selected.DepartmentName;
+
+                // Подтягиваем данные из штатного расписания
+                _employee.Salary = selected.Salary;
+                _employee.Allowance = selected.Allowance;
+                _employee.Rate = selected.Rate;
+                _employee.WorkWeek = selected.WorkWeek;
+                _employee.Category = selected.Category;
+
+                // Обновляем UI
+                cmbDepartment.Text = selected.DepartmentName;
+                txtSalary.Text = selected.Salary.ToString("N2");
+                txtAllowance.Text = selected.Allowance.ToString("N2");
+
+                // Обновляем ставку
+                string rateText = selected.Rate.ToString("0.00");
+                foreach (ComboBoxItem item in cmbRate.Items)
+                {
+                    if (item.Content.ToString().Contains(rateText))
+                    {
+                        cmbRate.SelectedItem = item;
+                        break;
+                    }
+                }
+
+                cmbWorkWeek.Text = selected.WorkWeek;
+                cmbCategory.Text = selected.Category;
+                UpdateTotalSalary();
             }
         }
 

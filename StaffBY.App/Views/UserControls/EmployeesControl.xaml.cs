@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using StaffBY.App.ViewModels;
 using StaffBY.App.Views;
+using StaffBY.App.Views.UserControls.EmployeeCard;
+
 
 namespace StaffBY.App.Views.UserControls
 {
@@ -176,18 +178,41 @@ namespace StaffBY.App.Views.UserControls
         /// </summary>
         private void AddEmployeeButton_Click(object sender, RoutedEventArgs e)
         {
-            var editWindow = new EmployeeEditWindow(null);  // null = новый сотрудник
-            editWindow.EmployeeSaved += (s, employee) =>
+            // Получаем список должностей из PositionsControl
+            var positionsControl = FindPositionsControl();
+            if (positionsControl == null)
             {
-                // Генерируем новый ID
-                employee.Id = _employees.Count > 0 ? _employees.Max(x => x.Id) + 1 : 1;
-                _employees.Add(employee);
+                StatusMessageChanged?.Invoke("Ошибка: не найден контрол штатного расписания");
+                return;
+            }
+
+            var positions = positionsControl.GetPositions();
+
+            var employeeCard = new EmployeeCardMain();
+            var newEmployee = new EmployeeViewModel();
+
+            // Открываем карточку для нового сотрудника
+            employeeCard.LoadData(newEmployee, positions);
+            employeeCard.EmployeeSaved += (s, savedEmployee) =>
+            {
+                savedEmployee.Id = _employees.Count > 0 ? _employees.Max(x => x.Id) + 1 : 1;
+                _employees.Add(savedEmployee);
                 RefreshGrid();
-                StatusMessageChanged?.Invoke($"Сотрудник {employee.LastName} {employee.FirstName} добавлен");
+                StatusMessageChanged?.Invoke($"Сотрудник {savedEmployee.LastName} {savedEmployee.FirstName} добавлен");
             };
-            editWindow.Owner = Window.GetWindow(this);
-            editWindow.ShowDialog();
+
+            var window = new Window
+            {
+                Title = "Новый сотрудник",
+                Content = employeeCard,
+                Width = 1100,
+                Height = 800,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = Window.GetWindow(this)
+            };
+            window.ShowDialog();
         }
+
 
         /// <summary>
         /// Двойной клик по строке - редактирование сотрудника
@@ -197,19 +222,39 @@ namespace StaffBY.App.Views.UserControls
             var dataGrid = sender as DataGrid;
             if (dataGrid?.SelectedItem is EmployeeViewModel selected)
             {
-                var editWindow = new EmployeeEditWindow(selected);
-                editWindow.EmployeeSaved += (s, employee) =>
+                // Получаем список должностей из PositionsControl
+                var positionsControl = FindPositionsControl();
+                if (positionsControl == null)
                 {
-                    var index = _employees.FindIndex(x => x.Id == employee.Id);
+                    StatusMessageChanged?.Invoke("Ошибка: не найден контрол штатного расписания");
+                    return;
+                }
+
+                var positions = positionsControl.GetPositions();
+
+                var employeeCard = new EmployeeCardMain();
+                employeeCard.LoadData(selected, positions);
+                employeeCard.EmployeeSaved += (s, savedEmployee) =>
+                {
+                    var index = _employees.FindIndex(x => x.Id == savedEmployee.Id);
                     if (index >= 0)
                     {
-                        _employees[index] = employee;
+                        _employees[index] = savedEmployee;
                         RefreshGrid();
-                        StatusMessageChanged?.Invoke($"Сотрудник {employee.LastName} {employee.FirstName} обновлен");
+                        StatusMessageChanged?.Invoke($"Сотрудник {savedEmployee.LastName} {savedEmployee.FirstName} обновлен");
                     }
                 };
-                editWindow.Owner = Window.GetWindow(this);
-                editWindow.ShowDialog();
+
+                var window = new Window
+                {
+                    Title = $"Редактирование сотрудника: {selected.FullName}",
+                    Content = employeeCard,
+                    Width = 1100,
+                    Height = 800,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Owner = Window.GetWindow(this)
+                };
+                window.ShowDialog();
             }
         }
 
@@ -233,6 +278,32 @@ namespace StaffBY.App.Views.UserControls
             {
                 StatusMessageChanged?.Invoke("Выберите сотрудника для увольнения");
             }
+        }
+
+        /// <summary>
+        /// Находит контрол PositionsControl на главном окне
+        /// </summary>
+        private PositionsControl? FindPositionsControl()
+        {
+            var parent = Window.GetWindow(this);
+            if (parent is MainWindow mainWindow)
+            {
+                // Ищем поле PositionsControl в MainWindow
+                var field = mainWindow.GetType().GetField("PositionsControl",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (field != null)
+                {
+                    return field.GetValue(mainWindow) as PositionsControl;
+                }
+
+                // Альтернативный способ: ищем по имени контрола
+                var control = mainWindow.FindName("PositionsControl");
+                if (control is PositionsControl positionsControl)
+                {
+                    return positionsControl;
+                }
+            }
+            return null;
         }
     }
 }

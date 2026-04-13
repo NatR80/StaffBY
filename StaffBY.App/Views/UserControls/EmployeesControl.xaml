@@ -26,7 +26,7 @@
                     Padding="10,5" Margin="5"
                     Background="#3498DB" Foreground="White"
                     Click="SearchButton_Click"/>
-            <Button Content="➕ Добавить сотрудника" 
+            <Button x:Name="AddEmployeeButton" Content="➕ Добавить сотрудника" 
                     Padding="10,5" Margin="5"
                     Background="#27AE60" Foreground="White"
                     Click="AddEmployeeButton_Click"/>

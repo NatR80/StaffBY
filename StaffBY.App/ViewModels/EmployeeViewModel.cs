@@ -1,7 +1,7 @@
 ﻿using System;
 using StaffBY.App.Models;
 using System.Collections.Generic;
-
+using StaffBY.App.ViewModels;
 
 namespace StaffBY.App.ViewModels
 {
@@ -14,7 +14,7 @@ namespace StaffBY.App.ViewModels
         public string FirstName { get; set; } = string.Empty;
         public string Patronymic { get; set; } = string.Empty;
         public string FullName => $"{LastName} {FirstName} {Patronymic}".Trim();
-        
+                  
 
         // Общие сведения
         public DateTime BirthDate { get; set; }
@@ -46,7 +46,7 @@ namespace StaffBY.App.ViewModels
 
 
         // Трудоустройство
-        public int? PositionId { get; set; }
+        public int? PositionId { get; set; } // ID должности из штатного расписания
         public string PositionName { get; set; } = string.Empty;
         public int? DepartmentId { get; set; }
         public string DepartmentName { get; set; } = string.Empty;
@@ -68,7 +68,7 @@ namespace StaffBY.App.ViewModels
         public bool IsPensioner { get; set; }             // Пенсионер
         public bool IsDisabled { get; set; }              // Инвалид
         public DateTime? DismissalDate { get; set; }      // Дата увольнения
-        //public string? AdditionalInfo { get; set; }       // Дополнительные сведения                                                          
+                                                               
         public string? EmploymentAdditionalInfo { get; set; } = string.Empty; //дополнительные сведения
 
         // Коллекции для таблиц
@@ -115,7 +115,5 @@ namespace StaffBY.App.ViewModels
 
 
     }
-
-
 
 }
