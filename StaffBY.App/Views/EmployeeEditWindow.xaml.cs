@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows;
 using StaffBY.App.ViewModels;
-using StaffBY.App.ViewModels.StaffBY.App.ViewModels;
 using StaffBY.App.Views.UserControls.EmployeeCard;
 
 namespace StaffBY.App.Views

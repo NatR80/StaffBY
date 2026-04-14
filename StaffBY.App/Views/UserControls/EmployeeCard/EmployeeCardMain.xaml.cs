@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using StaffBY.App.ViewModels;
 using StaffBY.App.Models;
-using StaffBY.App.ViewModels.StaffBY.App.ViewModels;
+
 
 namespace StaffBY.App.Views.UserControls.EmployeeCard
 {

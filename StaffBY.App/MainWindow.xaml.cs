@@ -26,6 +26,9 @@ namespace StaffBY.App.Views
             SubscribeToEvents();
             LoadData();
 
+            //// ВАЖНО: вызываем разграничение доступа по роли
+            //SetAccessByRole(currentUser);
+
             StatusText.Text = _currentUser != null
                 ? $"Добро пожаловать, {currentUser.Username}!"
                 : "Готов к работе";
@@ -33,15 +36,13 @@ namespace StaffBY.App.Views
 
         private void SubscribeToEvents()
         {
-            // Подписка на события EmployeesControl
             if (EmployeesControl != null)
             {
                 EmployeesControl.StatusMessageChanged += msg => StatusText.Text = msg;
                 EmployeesControl.EmployeeCountChanged += count => StatusText.Text = $"Сотрудников: {count}";
-                EmployeesControl.EmployeesChanged += () => LoadData(); // ВАЖНО: обновляем данные при изменении
+                EmployeesControl.EmployeesChanged += () => LoadData();
             }
 
-            // Подписка на события всех контролов
             if (PositionsControl != null)
                 PositionsControl.StatusMessageChanged += msg => StatusText.Text = msg;
 
@@ -74,23 +75,16 @@ namespace StaffBY.App.Views
         {
             try
             {
-                // Получаем ВСЕХ сотрудников (включая архивированных)
-                var allEmployees = EmployeesControl?.GetAllEmployees() ?? new System.Collections.Generic.List<EmployeeViewModel>();
-
-                // Получаем только активных сотрудников
+                var allEmployees = EmployeesControl?.GetAllEmployees() ?? new List<EmployeeViewModel>();
                 var activeEmployees = allEmployees.Where(e => !e.IsArchived).ToList();
 
-                // Передаем ВСЕХ сотрудников в ArchiveControl (нужны уволенные)
                 ArchiveControl?.SetEmployees(allEmployees);
-
-                // Передаем активных сотрудников в другие контролы
                 TimesheetControl?.SetEmployees(activeEmployees);
                 AccrualsControl?.SetEmployees(activeEmployees);
                 DocumentsControl?.SetEmployees(activeEmployees);
                 ReportsControl?.SetEmployees(activeEmployees);
 
-                // Для отпусков нужны активные сотрудники
-                var vacations = VacationsAllControl?.GetVacations() ?? new System.Collections.Generic.List<VacationViewModel>();
+                var vacations = VacationsAllControl?.GetVacations() ?? new List<VacationViewModel>();
                 ReportsControl?.SetVacations(vacations);
 
                 StatusText.Text = $"Данные загружены. Сотрудников: {activeEmployees.Count}, в архиве: {allEmployees.Count - activeEmployees.Count}";
@@ -113,5 +107,36 @@ namespace StaffBY.App.Views
                 authWindow.Show();
             }
         }
+
+        //private void SetAccessByRole(User user)
+        //{
+        //    if (user == null) return;
+
+        //    // Скрываем админскую вкладку по умолчанию
+        //    TabAdmin.Visibility = Visibility.Collapsed;
+
+        //    switch (user.Role)
+        //    {
+        //        case 0: // Admin
+        //            TabAdmin.Visibility = Visibility.Visible;
+        //            break;
+
+        //        case 1: // HR (Кадровик) - штатное расписание только просмотр
+        //            if (PositionsControl != null)
+        //                PositionsControl.SetReadOnly(true);
+        //            break;
+
+        //        case 2: // Economist (Экономист) - сотрудники только просмотр
+        //            if (EmployeesControl != null)
+        //                EmployeesControl.SetReadOnly(true);
+        //            break;
+
+        //        case 3: // Accountant (Бухгалтер) - сотрудники просмотр, штатное расписание скрыто
+        //            if (EmployeesControl != null)
+        //                EmployeesControl.SetReadOnly(true);
+        //            TabPositions.Visibility = Visibility.Collapsed;
+        //            break;
+        //    }
+        //}
     }
 }

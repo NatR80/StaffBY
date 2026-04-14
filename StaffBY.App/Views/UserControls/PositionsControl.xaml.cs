@@ -4,8 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using StaffBY.App.ViewModels;
-using StaffBY.App.ViewModels.StaffBY.App.ViewModels;
 using StaffBY.App.Views;
+
 
 namespace StaffBY.App.Views.UserControls
 {
@@ -204,5 +204,13 @@ namespace StaffBY.App.Views.UserControls
             RefreshDepartmentsList();
             return _departments;
         }
+
+        //public void SetReadOnly(bool isReadOnly)
+        //{
+        //    AddDepartmentButton.IsEnabled = !isReadOnly;
+        //    AddPositionButton.IsEnabled = !isReadOnly;
+        //    EditPositionButton.IsEnabled = !isReadOnly;
+        //    DeletePositionButton.IsEnabled = !isReadOnly;
+        //}
     }
 }

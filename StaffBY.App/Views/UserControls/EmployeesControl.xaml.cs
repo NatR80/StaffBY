@@ -305,5 +305,14 @@ namespace StaffBY.App.Views.UserControls
             }
             return null;
         }
+
+        //public void SetReadOnly(bool isReadOnly)
+        //{
+        //    AddEmployeeButton.IsEnabled = !isReadOnly;
+        //    FireEmployeeButton.IsEnabled = !isReadOnly;
+        //    // Запретить редактирование в DataGrid
+        //    if (EmployeesDataGrid != null)
+        //        EmployeesDataGrid.IsReadOnly = isReadOnly;
+        //}
     }
 }
