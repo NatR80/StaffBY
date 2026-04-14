@@ -6,6 +6,7 @@ using StaffBY.App.Views.UserControls;
 using StaffBY.App.ViewModels;
 using System.Collections.Generic;
 using StaffBY.App.Models;
+using StaffBY.Domain.Enums;
 
 namespace StaffBY.App.Views
 {
@@ -26,8 +27,9 @@ namespace StaffBY.App.Views
             SubscribeToEvents();
             LoadData();
 
-            //// ВАЖНО: вызываем разграничение доступа по роли
-            //SetAccessByRole(currentUser);
+
+            // ВАЖНО: вызываем разграничение доступа по роли
+            SetAccessByRole(currentUser);
 
             StatusText.Text = _currentUser != null
                 ? $"Добро пожаловать, {currentUser.Username}!"
@@ -108,35 +110,87 @@ namespace StaffBY.App.Views
             }
         }
 
-        //private void SetAccessByRole(User user)
-        //{
-        //    if (user == null) return;
+        private void SetAccessByRole(User user)
+        {
+            if (user == null) return;
 
-        //    // Скрываем админскую вкладку по умолчанию
-        //    TabAdmin.Visibility = Visibility.Collapsed;
+            // Сначала показываем все вкладки
+            SetAllTabsVisibility(Visibility.Visible);
 
-        //    switch (user.Role)
-        //    {
-        //        case 0: // Admin
-        //            TabAdmin.Visibility = Visibility.Visible;
-        //            break;
+            if (user.Role == UserRole.Admin) // 0 - Admin
+            {
+                // Админ видит всё
+                return;
+            }
+            else if (user.Role == UserRole.HR) // 1 - HR (Кадровик)
+            {
+                // Кадровик НЕ видит: Начисление ЗП и Выплата ЗП
+                if (AccrualsControl != null)
+                    AccrualsControl.Visibility = Visibility.Collapsed;
+                if (PaymentControl != null)
+                    PaymentControl.Visibility = Visibility.Collapsed;
+            }
+            else if (user.Role == UserRole.Economist) // 2 - Economist (Экономист)
+            {
+                // Экономист НЕ видит только: Выплата ЗП
+                if (PaymentControl != null)
+                    PaymentControl.Visibility = Visibility.Collapsed;
+            }
+            else if (user.Role == UserRole.Accountant) // 3 - Accountant (Бухгалтер)
+            {
+                // Бухгалтер видит ТОЛЬКО: Организация, Сотрудники, Начисление ЗП, Выплата ЗП
+                // Скрываем всё, кроме этих 4 вкладок
+                if (PositionsControl != null)
+                    PositionsControl.Visibility = Visibility.Collapsed;
+                if (VacationsAllControl != null)
+                    VacationsAllControl.Visibility = Visibility.Collapsed;
+                if (TimesheetControl != null)
+                    TimesheetControl.Visibility = Visibility.Collapsed;
+                if (DocumentsControl != null)
+                    DocumentsControl.Visibility = Visibility.Collapsed;
+                if (ReportsControl != null)
+                    ReportsControl.Visibility = Visibility.Collapsed;
+                if (ArchiveControl != null)
+                    ArchiveControl.Visibility = Visibility.Collapsed;
 
-        //        case 1: // HR (Кадровик) - штатное расписание только просмотр
-        //            if (PositionsControl != null)
-        //                PositionsControl.SetReadOnly(true);
-        //            break;
+                // Эти вкладки должны быть видны (убедимся)
+                if (OrganizationControl != null)
+                    OrganizationControl.Visibility = Visibility.Visible;
+                if (EmployeesControl != null)
+                    EmployeesControl.Visibility = Visibility.Visible;
+                if (AccrualsControl != null)
+                    AccrualsControl.Visibility = Visibility.Visible;
+                if (PaymentControl != null)
+                    PaymentControl.Visibility = Visibility.Visible;
+            }
+        }
 
-        //        case 2: // Economist (Экономист) - сотрудники только просмотр
-        //            if (EmployeesControl != null)
-        //                EmployeesControl.SetReadOnly(true);
-        //            break;
+        /// <summary>
+        /// Устанавливает видимость для всех вкладок
+        /// </summary>
+        private void SetAllTabsVisibility(Visibility visibility)
+        {
+            if (OrganizationControl != null)
+                OrganizationControl.Visibility = visibility;
+            if (EmployeesControl != null)
+                EmployeesControl.Visibility = visibility;
+            if (PositionsControl != null)
+                PositionsControl.Visibility = visibility;
+            if (VacationsAllControl != null)
+                VacationsAllControl.Visibility = visibility;
+            if (TimesheetControl != null)
+                TimesheetControl.Visibility = visibility;
+            if (AccrualsControl != null)
+                AccrualsControl.Visibility = visibility;
+            if (PaymentControl != null)
+                PaymentControl.Visibility = visibility;
+            if (DocumentsControl != null)
+                DocumentsControl.Visibility = visibility;
+            if (ReportsControl != null)
+                ReportsControl.Visibility = visibility;
+            if (ArchiveControl != null)
+                ArchiveControl.Visibility = visibility;
+        }
 
-        //        case 3: // Accountant (Бухгалтер) - сотрудники просмотр, штатное расписание скрыто
-        //            if (EmployeesControl != null)
-        //                EmployeesControl.SetReadOnly(true);
-        //            TabPositions.Visibility = Visibility.Collapsed;
-        //            break;
-        //    }
-        //}
     }
 }
